@@ -9703,3 +9703,8 @@ h6,
   padding: 0;
   list-style-type: none;
 }
+
+.leaflet-touch .leaflet-control-attribution, .leaflet-touch .leaflet-control-layers, .leaflet-touch .leaflet-bar {
+    box-shadow: none;
+    display: none !important;
+}

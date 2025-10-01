@@ -296,19 +296,20 @@ button.bg-primary:focus {
     margin: 5px 0;
     border-radius: 10px;
     background-color: rgba(46, 125, 50, 0.05);
-    border-left: 4px solid transparent;
+    border: 2px solid transparent;
     transition: all 0.3s ease;
     font-weight: 500;
     text-align: center;
+    color: var(--dark-green);
   }
   
   .nav-link:hover,
   .nav-link.active {
-    background-color: var(--primary-green);
-    color: white !important;
-    border-left-color: var(--primary-green-dark);
+    background-color: rgba(46, 125, 50, 0.08);
+    color: var(--primary-green) !important;
+    border-color: var(--primary-green);
     transform: translateX(5px);
-    box-shadow: 0 5px 15px rgba(46, 125, 50, 0.2);
+    box-shadow: 0 5px 15px rgba(46, 125, 50, 0.15);
   }
   
   /* Remove desktop hover effects on mobile */
@@ -749,15 +750,52 @@ body.nav-open {
   padding: 12px 30px;
 }
 
-/* Back to top button enhancement */
+/* Back to top button enhancement - Circular Luxury Design */
 .back-to-top {
-  background-color: var(--primary-green) !important;
-  border-color: var(--primary-green) !important;
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  z-index: 99;
+  width: 60px !important;
+  height: 60px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%) !important;
+  border: 3px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 8px 25px rgba(46, 125, 50, 0.4), 0 0 0 0 rgba(46, 125, 50, 0.7) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  animation: pulse-ring 2s infinite !important;
+}
+
+.back-to-top i {
+  font-size: 22px !important;
+  color: #ffffff !important;
+  transition: all 0.3s ease !important;
 }
 
 .back-to-top:hover {
-  background-color: var(--primary-green-dark) !important;
-  transform: translateY(-3px);
+  background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 100%) !important;
+  transform: translateY(-5px) scale(1.1) !important;
+  box-shadow: 0 12px 35px rgba(46, 125, 50, 0.6), 0 0 30px rgba(76, 175, 80, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.back-to-top:hover i {
+  transform: scale(1.2) !important;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.4), 0 0 0 0 rgba(46, 125, 50, 0.7);
+  }
+  70% {
+    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.4), 0 0 0 15px rgba(46, 125, 50, 0);
+  }
+  100% {
+    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.4), 0 0 0 0 rgba(46, 125, 50, 0);
+  }
 }
 
 /* Footer link color */
@@ -807,7 +845,8 @@ body.nav-open {
   overflow: hidden;
 }
 
-.hero-video-section iframe {
+.hero-video-section iframe,
+.hero-video-section video {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -817,6 +856,27 @@ body.nav-open {
   min-width: 177.77vh; /* 16:9 aspect ratio */
   transform: translate(-50%, -50%);
   z-index: 1;
+  object-fit: cover;
+}
+
+.hero-video-fallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('../img/carousel-1.jpg') center center / cover no-repeat;
+  z-index: 0;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+.hero-video-fallback.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.hero-background-video.video-error {
+  display: none;
 }
 
 .hero-overlay {
@@ -978,4 +1038,41 @@ body.nav-open {
     .whatsapp-btn i {
         font-size: 20px;
     }
+}
+
+
+/* Desactivar efectos hover en productos */
+.product-card:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.product-image-container:hover img {
+    transform: none !important;
+}
+
+.product-overlay,
+.hover-blur-effect {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+.product-card:hover .product-overlay,
+.product-card:hover .hover-blur-effect {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Remover tono verde en hover */
+.product-card::before,
+.product-card::after {
+    display: none !important;
+}
+
+.product-image-container::before,
+.product-image-container::after {
+    display: none !important;
+    background: none !important;
 }
