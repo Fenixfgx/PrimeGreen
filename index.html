@@ -43,16 +43,14 @@
 
 <body>
     <!-- Topbar Start -->
-    <div class="container-fluid bg-light d-none d-lg-block fixed-top" style="z-index: 1051;">
+    <div class="container-fluid d-none d-lg-block fixed-top" style="background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%); z-index: 1051;">
         <div class="row py-2 px-lg-5">
             <div class="col-lg-6 text-left mb-2 mb-lg-0">
                 <div class="d-inline-flex align-items-center">
-                    <small><i class="fa fa-phone-alt mr-2"></i>+57 (1) 234-5678</small>
-                    <small class="px-3">|</small>
-                    <small><i class="fa fa-envelope mr-2"></i>info@primegreen.com</small>
+                    <small class="text-white"><i class="fa fa-phone-alt mr-2"></i>+57 311 4525703</small>
                 </div>
             </div>
-            <div class="col-lg-6 text-right">
+            <div class="col-lg-6 text-right" style="display: none;">
                 <div class="d-inline-flex align-items-center">
                     <a class="text-primary px-2" href="#" title="Facebook">
                         <i class="fab fa-facebook-f"></i>
@@ -118,16 +116,23 @@
     <!-- Hero Video Section Start -->
     <div class="container-fluid p-0 mb-5 pb-5 main-content hero-video-section" id="inicio">
         <div class="position-relative" style="min-height: 100vh; overflow: hidden;">
-            <!-- YouTube Video Background -->
-            <iframe 
-                class="position-absolute w-100 h-100" 
-                src="https://www.youtube.com/embed/5Mv5xoz08Mo?autoplay=1&mute=1&loop=1&playlist=5Mv5xoz08Mo&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0&cc_load_policy=0&playsinline=1&enablejsapi=1&start=1&vq=hd1080"
-                frameborder="0" 
-                allow="autoplay; encrypted-media" 
-                allowfullscreen
-                style="object-fit: cover; pointer-events: none; z-index: 1;"
-                loading="eager">
-            </iframe>
+            <!-- Local Video Background -->
+            <div class="position-absolute w-100 h-100 hero-video-fallback"></div>
+
+            <video 
+                id="hero-video"
+                class="position-absolute w-100 h-100 hero-background-video" 
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="auto"
+                poster="img/carousel-1.jpg"
+                aria-hidden="true"
+                style="object-fit: cover; pointer-events: none; z-index: 1;">
+                <source src="video/Video Prime.m4v" type="video/mp4">
+                Tu navegador no soporta la reproducción de video.
+            </video>
             
             <!-- Overlay for better text readability -->
             <div class="position-absolute w-100 h-100 hero-overlay" style="z-index: 2;"></div>
@@ -136,7 +141,7 @@
             <div class="position-absolute w-100 h-100 d-flex flex-column align-items-center justify-content-center hero-content" style="z-index: 3;">
                 <div class="text-center p-3" style="max-width: 900px;">
                     <h6 class="text-white text-uppercase mb-3 animate__animated animate__fadeInDown" style="letter-spacing: 3px; text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">Prime Green - Follajes Naturales</h6>
-                    <h1 class="display-3 text-white mb-4 animate__animated animate__fadeInUp" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.8); font-weight: 700;">Nuestros Verdes en el Mundo</h1>
+                    <h1 class="display-3 text-white mb-4 animate__animated animate__fadeInUp" style="text-shadow: 0 0 10px rgba(255,255,255,0.5); font-weight: 300; letter-spacing: 2px; font-family: 'Georgia', 'Times New Roman', serif; text-transform: uppercase; line-height: 1.1;">Nuestros Verdes en el Mundo</h1>
                     <p class="lead text-white mx-md-5 px-3 mb-4 animate__animated animate__fadeInUp animate__delay-1s" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.7); font-size: 1.3rem;">Especializados en el cultivo y distribución de follajes de la más alta calidad, llevando la naturaleza a cada rincón del mundo</p>
                     <a class="btn btn-outline-light btn-lg py-3 px-5 mt-3 animate__animated animate__fadeInUp animate__delay-2s" href="#nuestros-verdes" style="border-width: 2px; letter-spacing: 1px; font-weight: 600;">Conoce Más</a>
                 </div>
@@ -384,8 +389,8 @@
                 </div>
             </div>
 
-            <!-- Indicadores de categorías -->
-            <div class="row mt-5">
+            <!-- Indicadores de categorías (Ocultos) -->
+            <div class="row mt-5" style="display: none;">
                 <div class="col-12">
                     <div class="category-filters text-center">
                         <button class="btn btn-category active" data-category="all">
@@ -407,8 +412,8 @@
                 </div>
             </div>
 
-            <!-- Llamada a la acción -->
-            <div class="row mt-5">
+            <!-- Llamada a la acción (Oculta) -->
+            <div class="row mt-5" style="display: none;">
                 <div class="col-12 text-center">
                     <div class="bg-primary rounded-lg p-4 text-white">
                         <h4 class="font-weight-bold mb-3">¿Necesitas un Producto Específico?</h4>
@@ -452,14 +457,14 @@
                     <p class="lead mb-5">Conoce al equipo de profesionales que hace posible la excelencia en cada proyecto de Prime Green</p>
                 </div>
             </div>
-            <div class="row">
+            <div class="row justify-content-center">
                 <div class="col-lg-3 col-md-6">
                     <div class="team position-relative overflow-hidden mb-5 rounded-lg shadow-sm">
-                        <img class="img-fluid" src="img/DSC00963.JPG" alt="Director de Cultivos" style="height: 250px; object-fit: cover;">
+                        <img class="img-fluid" src="img/a (1).png" alt="Director de Cultivos" style="width: 100%; height: 250px; object-fit: cover;">
                         <div class="position-relative text-center">
                             <div class="team-text bg-primary text-white p-4">
-                                <h5 class="text-white text-uppercase font-weight-bold">Carlos Mendez</h5>
-                                <p class="m-0">Director de Cultivos</p>
+                                <h5 class="text-white text-uppercase font-weight-bold">Sebastián Rodríguez</h5>
+                                <p class="m-0">Commercial Manager</p>
                             </div>
                             <div class="team-social bg-dark text-center p-3">
                                 <a class="btn btn-outline-light btn-sm mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
@@ -471,11 +476,11 @@
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="team position-relative overflow-hidden mb-5 rounded-lg shadow-sm">
-                        <img class="img-fluid" src="img/DSC00660.JPG" alt="Especialista en Distribución" style="height: 250px; object-fit: cover;">
+                        <img class="img-fluid" src="img/a (2).png" alt="Especialista en Distribución" style="width: 100%; height: 250px; object-fit: cover;">
                         <div class="position-relative text-center">
                             <div class="team-text bg-primary text-white p-4">
-                                <h5 class="text-white text-uppercase font-weight-bold">Ana García</h5>
-                                <p class="m-0">Especialista en Distribución</p>
+                                <h5 class="text-white text-uppercase font-weight-bold">Felipe Torres</h5>
+                                <p class="m-0">Sales Representative</p>
                             </div>
                             <div class="team-social bg-dark text-center p-3">
                                 <a class="btn btn-outline-light btn-sm mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
@@ -487,27 +492,11 @@
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="team position-relative overflow-hidden mb-5 rounded-lg shadow-sm">
-                        <img class="img-fluid" src="img/DSC00598.JPG" alt="Ingeniera Agrónoma" style="height: 250px; object-fit: cover;">
+                        <img class="img-fluid" src="img/a (3).png" alt="Ingeniera Agrónoma" style="width: 100%; height: 250px; object-fit: cover;">
                         <div class="position-relative text-center">
                             <div class="team-text bg-primary text-white p-4">
-                                <h5 class="text-white text-uppercase font-weight-bold">Laura Rojas</h5>
-                                <p class="m-0">Ingeniera Agrónoma</p>
-                            </div>
-                            <div class="team-social bg-dark text-center p-3">
-                                <a class="btn btn-outline-light btn-sm mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
-                                <a class="btn btn-outline-light btn-sm mr-2" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-light btn-sm" href="#"><i class="fas fa-envelope"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="team position-relative overflow-hidden mb-5 rounded-lg shadow-sm">
-                        <img class="img-fluid" src="img/DSC00633.JPG" alt="Director Comercial" style="height: 250px; object-fit: cover;">
-                        <div class="position-relative text-center">
-                            <div class="team-text bg-primary text-white p-4">
-                                <h5 class="text-white text-uppercase font-weight-bold">Roberto Silva</h5>
-                                <p class="m-0">Director Comercial</p>
+                                <h5 class="text-white text-uppercase font-weight-bold">Sara Piedrahita</h5>
+                                <p class="m-0">Sales Representative</p>
                             </div>
                             <div class="team-social bg-dark text-center p-3">
                                 <a class="btn btn-outline-light btn-sm mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
@@ -532,8 +521,8 @@
                         <h1 class="mb-3 text-white"><span class="text-primary">Prime Green</span> S.A.S</h1>
                     </a>
                     <p class="text-light">Líderes en cultivo y distribución de follajes naturales de calidad premium. Especializados en brindar soluciones integrales para proyectos decorativos, paisajísticos y comerciales en todo el mundo.</p>
-                    <p class="text-light"><i class="fa fa-map-marker-alt mr-2 text-primary"></i>Bogotá, Colombia</p>
-                    <p class="text-light"><i class="fa fa-phone-alt mr-2 text-primary"></i>+57 (1) 234-5678</p>
+                    <p class="text-light"><i class="fa fa-map-marker-alt mr-2 text-primary"></i>Cachipay, Cundinamarca</p>
+                    <p class="text-light"><i class="fa fa-phone-alt mr-2 text-primary"></i>+57 311 4525703</p>
                     <p class="text-light"><i class="fa fa-envelope mr-2 text-primary"></i>info@primegreen.com.co</p>
                     <div class="d-flex justify-content-start mt-4">
                         <a class="btn btn-lg btn-primary btn-lg-square mr-2" href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
@@ -544,7 +533,7 @@
                 </div>
                 <div class="col-lg-6 pl-lg-5">
                     <div class="row">
-                        <div class="col-sm-6 mb-5">
+                        <div class="col-sm-12 mb-5">
                             <h5 class="text-white text-uppercase mb-4">Enlaces Rápidos</h5>
                             <div class="d-flex flex-column justify-content-start">
                                 <a class="text-white-50 mb-2" href="#inicio"><i class="fa fa-angle-right mr-2"></i>Inicio</a>
@@ -552,28 +541,6 @@
                                 <a class="text-white-50 mb-2" href="#nuestros-verdes"><i class="fa fa-angle-right mr-2"></i>Nuestros Verdes</a>
                                 <a class="text-white-50 mb-2" href="#nuestras-fincas"><i class="fa fa-angle-right mr-2"></i>Nuestras Fincas</a>
                                 <a class="text-white-50" href="#nuestro-equipo"><i class="fa fa-angle-right mr-2"></i>Nuestro Equipo</a>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 mb-5">
-                            <h5 class="text-white text-uppercase mb-4">Nuestros Productos</h5>
-                            <div class="d-flex flex-column justify-content-start">
-                                <a class="text-white-50 mb-2" href="#catalogo"><i class="fa fa-angle-right mr-2"></i>Follajes Decorativos</a>
-                                <a class="text-white-50 mb-2" href="#catalogo"><i class="fa fa-angle-right mr-2"></i>Plantas Ornamentales</a>
-                                <a class="text-white-50 mb-2" href="#catalogo"><i class="fa fa-angle-right mr-2"></i>Proyectos Corporativos</a>
-                                <a class="text-white-50 mb-2" href="#catalogo"><i class="fa fa-angle-right mr-2"></i>Cultivo Sostenible</a>
-                                <a class="text-white-50" href="#catalogo"><i class="fa fa-angle-right mr-2"></i>Distribución Global</a>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 mb-5">
-                            <h5 class="text-white text-uppercase mb-4">Boletín Informativo</h5>
-                            <p class="text-light mb-3">Mantente actualizado con nuestras últimas variedades de follajes y promociones especiales.</p>
-                            <div class="w-100">
-                                <div class="input-group">
-                                    <input type="email" class="form-control border-light" style="padding: 25px;" placeholder="Tu Correo Electrónico">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary px-4">Suscribirse</button>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -650,9 +617,60 @@
     <script>
         // Variables globales
         let filteredProducts = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroVideo = document.getElementById('hero-video');
+            const heroFallback = document.querySelector('.hero-video-fallback');
+
+            if (heroVideo) {
+                const hideFallback = () => {
+                    if (heroFallback) {
+                        heroFallback.classList.add('is-hidden');
+                    }
+                };
+
+                const showFallback = () => {
+                    heroVideo.classList.add('video-error');
+                    if (heroFallback) {
+                        heroFallback.classList.remove('is-hidden');
+                    }
+                };
+
+                heroVideo.setAttribute('muted', '');
+                heroVideo.muted = true;
+
+                heroVideo.addEventListener('loadeddata', hideFallback, { once: true });
+                heroVideo.addEventListener('canplay', hideFallback, { once: true });
+                heroVideo.addEventListener('error', (event) => {
+                    console.error('Error al cargar el video de portada:', heroVideo.error || event);
+                    showFallback();
+                });
+
+                const attemptPlay = (retries = 2) => {
+                    const playPromise = heroVideo.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(() => {
+                            if (retries > 0) {
+                                setTimeout(() => attemptPlay(retries - 1), 800);
+                            } else {
+                                heroVideo.setAttribute('controls', 'controls');
+                                showFallback();
+                            }
+                        });
+                    }
+                };
+
+                attemptPlay();
+            }
+        });
         
         // Función global para obtener producto por ID
         function getProductById(productId) {
+            // Primero buscar en productsData si está disponible
+            if (typeof productsData !== 'undefined' && productsData[productId]) {
+                return productsData[productId];
+            }
+            // Si no, buscar en filteredProducts
             return filteredProducts.find(product => product.id === productId);
         }
 
@@ -1324,8 +1342,19 @@
             function initProductsGallery() {
                 console.log('🚀 Inicializando galería de productos...');
                 
-                // Usar los productos definidos directamente en el código
-                loadFallbackProducts();
+                // Verificar si productsData está disponible del archivo externo
+                if (typeof productsData !== 'undefined' && Object.keys(productsData).length > 0) {
+                    console.log('📦 Usando productos del archivo products-data.js');
+                    filteredProducts = Object.values(productsData);
+                    console.log(`✅ ${filteredProducts.length} productos cargados desde products-data.js`);
+                } else {
+                    console.log('⚠️ products-data.js no disponible, usando productos de respaldo');
+                    loadFallbackProducts();
+                }
+                
+                renderProductsGallery();
+                startGalleryAutoScroll();
+                setupGalleryControls();
                 console.log('✅ Galería inicializada correctamente');
             }
             
@@ -1497,10 +1526,7 @@
                     }
                 ];
                 
-                console.log(`📊 ${filteredProducts.length} productos cargados`);
-                renderProductsGallery();
-                startGalleryAutoScroll();
-                setupGalleryControls();
+                console.log(`📊 ${filteredProducts.length} productos de respaldo cargados`);
             }
 
             // Renderizar galería de productos
@@ -1515,13 +1541,18 @@
 
                 // Generar slides de productos para Swiper
                 filteredProducts.forEach((product) => {
+                    // Manejar diferentes estructuras de datos
+                    const availableSizes = product.characteristics?.availableSizes 
+                        ? product.characteristics.availableSizes.join(', ')
+                        : product.characteristics?.height || 'Varios tamaños';
+                    
                     const productSlide = `
                         <div class="swiper-slide">
-                            <div class="product-card" data-product-id="${product.id}" onclick="showProductModal('${product.id}')">
+                            <div class="product-card" data-product-id="${product.id}">
                                 <div class="product-image-container">
                                     <img src="${product.image}" alt="${product.name}" class="product-image" 
                                          onerror="this.src='img/service-1.jpg';">
-                                    <div class="product-overlay">
+                                    <div class="product-overlay" style="display: none;">
                                         <div class="product-badge">
                                             <span class="badge badge-luxury">${product.category}</span>
                                         </div>
@@ -1529,7 +1560,7 @@
                                             ${generateStars(product.popularity)}
                                         </div>
                                     </div>
-                                    <div class="hover-blur-effect">
+                                    <div class="hover-blur-effect" style="display: none;">
                                         <div class="hover-content">
                                             <i class="fas fa-search-plus fa-3x mb-3 text-white"></i>
                                             <p class="text-white mb-0 font-weight-bold">Ver Detalles</p>
@@ -1542,12 +1573,9 @@
                                     <div class="product-specs">
                                         <div class="spec-item">
                                             <i class="fas fa-ruler-vertical text-success mr-2"></i>
-                                            <span>Tamaños: ${product.characteristics.availableSizes.join(', ')}</span>
+                                            <span>Altura: ${availableSizes}</span>
                                         </div>
                                     </div>
-                                    <button class="btn btn-outline-success btn-block mt-3" onclick="showProductModal('${product.id}')">
-                                        <i class="fas fa-eye mr-2"></i>Ver más detalles
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -1662,6 +1690,11 @@
                     return;
                 }
 
+                // Manejar diferentes estructuras de datos
+                const availableSizes = product.characteristics?.availableSizes 
+                    ? product.characteristics.availableSizes.join(', ')
+                    : product.characteristics?.height || 'Varios tamaños';
+
                 const modalContent = `
                     <div class="modal-header bg-gradient-success text-white border-0" style="background: linear-gradient(135deg, #2E7D32 0%, #43A047 100%);">
                         <div class="d-flex align-items-center">
@@ -1708,8 +1741,8 @@
                                                 <i class="fas fa-ruler-vertical text-success"></i>
                                             </div>
                                             <div class="char-content">
-                                                <strong>Tamaños:</strong>
-                                                <span class="text-muted">${product.characteristics.availableSizes.join(', ')}</span>
+                                                <strong>Altura:</strong>
+                                                <span class="text-muted">${availableSizes}</span>
                                             </div>
                                         </div>
                                         <div class="char-card mb-2">
@@ -2744,29 +2777,22 @@
             transition: all 0.4s ease;
         }
         
-        /* Efecto blur al hover */
+        /* Efecto hover desactivado - imagen siempre nítida */
         .product-card:hover .product-image {
-            filter: blur(3px);
-            transform: scale(1.1);
+            filter: none !important;
+            transform: none !important;
         }
         
         .hover-blur-effect {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(46, 125, 50, 0.85);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: all 0.4s ease;
-            backdrop-filter: blur(5px);
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
         }
         
         .product-card:hover .hover-blur-effect {
-            opacity: 1;
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
         }
         
         .hover-content {
