@@ -1,0 +1,20 @@
+# robots.txt para Prime Green
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.primegreen.com/sitemap.xml
+
+# Directorios permitidos
+Allow: /img/
+Allow: /css/
+Allow: /js/
+Allow: /assets/
+
+# Bloquear archivos innecesarios
+Disallow: /scss/
+Disallow: /*.txt$
+Disallow: /READ-ME.txt
+
+# Crawl-delay para bots
+Crawl-delay: 1

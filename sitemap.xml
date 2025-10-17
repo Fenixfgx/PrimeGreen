@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  
+  <!-- Página Principal -->
+  <url>
+    <loc>https://www.primegreen.com/</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://www.primegreen.com/assets/logo.png</image:loc>
+      <image:title>Prime Green Logo</image:title>
+      <image:caption>Prime Green - Follajes Naturales Premium</image:caption>
+    </image:image>
+  </url>
+  
+  <!-- Sección Inicio -->
+  <url>
+    <loc>https://www.primegreen.com/#inicio</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Sección Sobre Nosotros -->
+  <url>
+    <loc>https://www.primegreen.com/#about</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Sección Servicios -->
+  <url>
+    <loc>https://www.primegreen.com/#service</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Sección Productos -->
+  <url>
+    <loc>https://www.primegreen.com/#products</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://www.primegreen.com/img/Productos/1.png</image:loc>
+      <image:title>Ruscus Premium</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.primegreen.com/img/Productos/2.png</image:loc>
+      <image:title>Pino Natural</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.primegreen.com/img/Productos/3.png</image:loc>
+      <image:title>Palma Elegante</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.primegreen.com/img/Productos/4.png</image:loc>
+      <image:title>Palma Rivelina</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.primegreen.com/img/Productos/6.png</image:loc>
+      <image:title>Brillantina</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.primegreen.com/img/Productos/7.png</image:loc>
+      <image:title>Helecho</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.primegreen.com/img/Productos/8.png</image:loc>
+      <image:title>Eucalipto Premium</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.primegreen.com/img/Productos/9.png</image:loc>
+      <image:title>Coculus</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.primegreen.com/img/Productos/10.png</image:loc>
+      <image:title>Cinta Liriope</image:title>
+    </image:image>
+  </url>
+  
+  <!-- Sección Nuestros Verdes en el Mundo -->
+  <url>
+    <loc>https://www.primegreen.com/#nuestros-verdes</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Sección Equipo -->
+  <url>
+    <loc>https://www.primegreen.com/#team</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Sección Contacto -->
+  <url>
+    <loc>https://www.primegreen.com/#contact</loc>
+    <lastmod>2025-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+</urlset>
