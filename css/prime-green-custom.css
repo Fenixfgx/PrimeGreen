@@ -1076,3 +1076,13 @@ body.nav-open {
     display: none !important;
     background: none !important;
 }
+
+/* Ocultar los controles de zoom/atribución de Leaflet en el mapa del mundo.
+   ponytail: esta regla vive al final de style.css y no está en style.min.css,
+   que es el archivo que se sirve; si se regenera el minificado, se puede borrar. */
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+    box-shadow: none;
+    display: none !important;
+}

@@ -13,7 +13,5 @@ Allow: /assets/
 
 # Bloquear archivos innecesarios
 Disallow: /scss/
+Disallow: /tools/
 Disallow: /READ-ME.txt
-
-# Crawl-delay para bots
-Crawl-delay: 1

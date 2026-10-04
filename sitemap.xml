@@ -5,13 +5,21 @@
   <!-- Página Principal -->
   <url>
     <loc>https://www.primegreen.com.co/</loc>
-    <lastmod>2026-04-20</lastmod>
+    <lastmod>2026-10-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://www.primegreen.com.co/assets/logo.png</image:loc>
       <image:title>Prime Green Logo</image:title>
       <image:caption>Prime Green - Follajes Naturales Premium</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.primegreen.com.co/img/Productos/1.png</image:loc>
+      <image:title>Ruscus Premium - follaje natural para floristería</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.primegreen.com.co/img/Productos/8.png</image:loc>
+      <image:title>Eucalipto Premium - follaje natural de exportación</image:title>
     </image:image>
   </url>
   

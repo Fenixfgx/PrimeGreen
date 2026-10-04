@@ -3,12 +3,11 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Prime Green - Follajes Naturales de Calidad Premium | Exportación Mundial</title>
+    <title>Follajes Naturales Premium de Colombia | Prime Green</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Prime Green - Líderes en cultivo y exportación de follajes naturales premium: Ruscus, Eucalipto, Helechos, Palmas. Distribución mundial desde Colombia. Calidad garantizada para floristería y decoración.">
-    <meta name="keywords" content="follajes naturales, follajes premium, ruscus, eucalipto, helecho, palma, coculus, follajes decorativos, exportación follajes Colombia, follajes para floristería, plantas ornamentales, follajes frescos, Prime Green, distribución internacional follajes, follajes de calidad, cultivo sostenible follajes">
+    <meta name="description" content="Cultivo y exportación de follajes naturales premium desde Colombia: Ruscus, Eucalipto, Helechos y Palmas. Calidad garantizada para floristería y decoración.">
     <meta name="author" content="Prime Green">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="googlebot" content="index, follow">
@@ -26,9 +25,10 @@
     <meta property="og:url" content="https://www.primegreen.com.co/">
     <meta property="og:title" content="Prime Green - Follajes Naturales de Calidad Premium | Exportación Mundial">
     <meta property="og:description" content="Expertos en cultivo y exportación de follajes naturales premium: Ruscus, Eucalipto, Helechos, Palmas. Distribución mundial desde Colombia con los más altos estándares de calidad.">
-    <meta property="og:image" content="https://www.primegreen.com.co/img/Productos/1.png">
+    <meta property="og:image" content="https://www.primegreen.com.co/img/og-primegreen.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Cultivos de follajes naturales de Prime Green en Colombia">
     <meta property="og:locale" content="es_CO">
     <meta property="og:site_name" content="Prime Green">
     
@@ -37,7 +37,7 @@
     <meta name="twitter:url" content="https://www.primegreen.com.co/">
     <meta name="twitter:title" content="Prime Green - Follajes Naturales Premium">
     <meta name="twitter:description" content="Líderes en cultivo y exportación de follajes naturales de calidad premium. Distribución mundial desde Colombia.">
-    <meta name="twitter:image" content="https://www.primegreen.com.co/img/Productos/1.png">
+    <meta name="twitter:image" content="https://www.primegreen.com.co/img/og-primegreen.jpg">
     
     <!-- Additional SEO -->
     <meta name="format-detection" content="telephone=yes">
@@ -83,9 +83,7 @@
         "opens": "08:00",
         "closes": "17:00"
       },
-      "sameAs": [
-        "https://www.primegreen.com.co"
-      ],
+      "email": "info@primegreen.com.co",
       "description": "Líderes en cultivo y distribución de follajes naturales de calidad premium. Servicios especializados para proyectos decorativos y paisajísticos con distribución mundial.",
       "priceRange": "$$-$$$",
       "areaServed": {
@@ -171,6 +169,7 @@
       "name": "Prime Green",
       "url": "https://www.primegreen.com.co",
       "logo": "https://www.primegreen.com.co/assets/logo.png",
+      "email": "info@primegreen.com.co",
       "contactPoint": {
         "@type": "ContactPoint",
         "telephone": "+57-311-4525703",
@@ -189,10 +188,17 @@
 
     <!-- Favicon -->
     <link href="assets/logo.png" rel="icon">
+    <link href="assets/logo.png" rel="apple-touch-icon">
 
     <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Preconnect to the CDNs that serve render-critical CSS/JS -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -210,11 +216,9 @@
 
     <!-- Libraries Stylesheet -->
     <link href="lib/animate/animate.min.css" rel="stylesheet">
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/style.css" rel="stylesheet">
+    <link href="css/style.min.css" rel="stylesheet">
     
     <!-- Prime Green Custom Styles -->
     <link href="css/prime-green-custom.css" rel="stylesheet">
@@ -301,16 +305,15 @@
             <video 
                 id="hero-video"
                 class="position-absolute w-100 h-100 hero-background-video" 
-                autoplay
                 muted
                 loop
                 playsinline
-                preload="auto"
+                preload="none"
                 poster="img/carousel-1.jpg"
                 aria-hidden="true"
                 style="object-fit: cover; pointer-events: none; z-index: 1;">
-                <source src="video/Video Prime.m4v" type="video/mp4">
-                Tu navegador no soporta la reproducción de video.
+                <!-- ponytail: la fuente se inyecta por JS sólo si el equipo lo permite, para no
+                     descargar 21 MB en móviles. Recomprimido con ffmpeg bajaría a ~3 MB. -->
             </video>
             
             <!-- Overlay for better text readability -->
@@ -320,7 +323,7 @@
             <div class="position-absolute w-100 h-100 d-flex flex-column align-items-center justify-content-center hero-content" style="z-index: 3;">
                 <div class="text-center p-3" style="max-width: 900px;">
                     <h6 class="text-white text-uppercase mb-3 animate__animated animate__fadeInDown" style="letter-spacing: 3px; text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">Prime Green - Follajes Naturales</h6>
-                    <h1 class="display-3 text-white mb-4 animate__animated animate__fadeInUp" style="text-shadow: 0 0 10px rgba(255,255,255,0.5); font-weight: 300; letter-spacing: 2px; font-family: 'Georgia', 'Times New Roman', serif; text-transform: uppercase; line-height: 1.1;">Nuestros Verdes en el Mundo</h1>
+                    <h1 class="display-3 text-white mb-4" style="text-shadow: 0 0 10px rgba(255,255,255,0.5); font-weight: 300; letter-spacing: 2px; font-family: 'Georgia', 'Times New Roman', serif; text-transform: uppercase; line-height: 1.1;">Nuestros Verdes en el Mundo</h1>
                     <p class="lead text-white mx-md-5 px-3 mb-4 animate__animated animate__fadeInUp animate__delay-1s" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.7); font-size: 1.3rem;">Especializados en el cultivo y distribución de follajes de la más alta calidad, llevando la naturaleza a cada rincón del mundo</p>
                     <a class="btn btn-outline-light btn-lg py-3 px-5 mt-3 animate__animated animate__fadeInUp animate__delay-2s" href="#nuestros-verdes" style="border-width: 2px; letter-spacing: 1px; font-weight: 600;">Conoce Más</a>
                 </div>
@@ -336,11 +339,11 @@
         <div class="container py-5">
             <div class="row align-items-center">
                 <div class="col-lg-6 pb-5 pb-lg-0">
-                    <img class="img-fluid w-100 rounded shadow-lg" src="img/DSC00592.png" alt="Prime Green Follajes">
+                    <img class="img-fluid w-100 rounded shadow-lg" src="img/DSC00592.jpg" alt="Cultivo de follajes naturales de Prime Green en Cachipay, Cundinamarca" width="900" height="600" decoding="async">
                 </div>
                 <div class="col-lg-6">
                     <h6 class="d-inline-block text-primary text-uppercase bg-light py-2 px-3 rounded-pill">Acerca de Nosotros</h6>
-                    <h1 class="mb-4 font-weight-bold">Prime Green - Líderes en <span class="text-primary">Follajes Naturales</span></h1>
+                    <h2 class="mb-4 font-weight-bold">Prime Green - Líderes en <span class="text-primary">Follajes Naturales</span></h2>
                     <p class="pl-4 border-left border-primary lead">En Prime Green, nos especializamos en el cultivo, producción y distribución de follajes naturales de la más alta calidad. Con años de experiencia en el sector, hemos llevado la belleza natural a hogares, oficinas y espacios comerciales alrededor del mundo.</p>
                     <div class="row pt-4">
                         <div class="col-6">
@@ -368,7 +371,7 @@
         <div class="row mx-0 justify-content-center text-center">
             <div class="col-lg-8">
                 <h6 class="d-inline-block bg-light text-primary text-uppercase py-2 px-3 rounded-pill">Nuestros Verdes en el Mundo</h6>
-                <h1 class="mb-4 font-weight-bold">Presencia <span class="text-primary">Global</span> en Follajes Premium</h1>
+                <h2 class="mb-4 font-weight-bold">Presencia <span class="text-primary">Global</span> en Follajes Premium</h2>
                 <p class="lead mb-5">Desde nuestras fincas hasta los rincones más exclusivos del mundo, llevamos la excelencia en follajes naturales a cada lugar. Haz clic en cualquier país para conocer nuestros productos más populares en esa región.</p>
             </div>
         </div>
@@ -415,7 +418,7 @@
             <div class="row mb-5">
                 <div class="col-12 text-center">
                     <h6 class="d-inline-block text-white text-uppercase bg-primary py-2 px-4 rounded-pill mb-3" style="color:white !important">Nuestras Fincas</h6>
-                    <h1 class="display-4 font-weight-bold mb-4">De Colombia para el <span class="text-primary">Mundo</span></h1>
+                    <h2 class="display-4 font-weight-bold mb-4">De Colombia para el <span class="text-primary">Mundo</span></h2>
                     <p style="padding-bottom: 10px;" class="lead text-muted mb-0">Descubre nuestras instalaciones de cultivo de clase mundial, donde cada follaje es cuidadosamente seleccionado y preparado para la exportación internacional.</p>
                          
             <div class="row">
@@ -423,7 +426,7 @@
                     <div class="farm-gallery-card bg-white rounded-lg shadow-lg overflow-hidden h-100">
                         <div class="row no-gutters">
                             <div class="col-md-6">
-                                <img src="img/DSC00551.JPG" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 250px;" alt="Finca Principal">
+                                <img src="img/DSC00551.JPG" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 250px;" alt="Finca de cultivo de follajes de Prime Green en Cachipay" width="1600" height="899" loading="lazy" decoding="async">
                             </div>
                             <div class="col-md-6">
                                 <div class="p-4 h-100 d-flex flex-column justify-content-center">
@@ -447,7 +450,7 @@
                     <div class="farm-gallery-card bg-white rounded-lg shadow-lg overflow-hidden h-100">
                         <div class="row no-gutters">
                             <div class="col-md-6">
-                                <img src="img/DSC00565.JPG" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 250px;" alt="Cultivos Tropicales">
+                                <img src="img/DSC00565.JPG" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 250px;" alt="Cultivos tropicales de follajes para exportación" width="1600" height="899" loading="lazy" decoding="async">
                             </div>
                             <div class="col-md-6">
                                 <div class="p-4 h-100 d-flex flex-column justify-content-center">
@@ -471,7 +474,7 @@
                     <div class="farm-gallery-card bg-white rounded-lg shadow-lg overflow-hidden h-100">
                         <div class="row no-gutters">
                             <div class="col-md-6">
-                                <img src="img/DSC00567.JPG" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 250px;" alt="Invernaderos">
+                                <img src="img/DSC00567.JPG" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 250px;" alt="Invernaderos de producción de follajes naturales" width="1600" height="899" loading="lazy" decoding="async">
                             </div>
                             <div class="col-md-6">
                                 <div class="p-4 h-100 d-flex flex-column justify-content-center">
@@ -495,7 +498,7 @@
                     <div class="farm-gallery-card bg-white rounded-lg shadow-lg overflow-hidden h-100">
                         <div class="row no-gutters">
                             <div class="col-md-6">
-                                <img src="img/DSC00598.JPG" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 250px;" alt="Control de Calidad">
+                                <img src="img/DSC00598.JPG" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 250px;" alt="Control de calidad de follajes antes del envío" width="1600" height="899" loading="lazy" decoding="async">
                             </div>
                             <div class="col-md-6">
                                 <div class="p-4 h-100 d-flex flex-column justify-content-center">
@@ -532,7 +535,7 @@
             <div class="row justify-content-center text-center mb-5">
                 <div class="col-lg-8">
                     <h6 class="d-inline-block text-white text-uppercase bg-primary py-2 px-4 rounded-pill mb-3" style="color: white !important;">Nuestro Catálogo</h6>
-                    <h1 class="display-4 font-weight-bold mb-4">Follajes <span class="text-primary">Premium</span> para Cada Proyecto</h1>
+                    <h2 class="display-4 font-weight-bold mb-4">Follajes <span class="text-primary">Premium</span> para Cada Proyecto</h2>
                     <p class="lead text-muted mb-0">Descubre nuestra selección exclusiva de productos cultivados con los más altos estándares de calidad para mercados internacionales.</p>
                 </div>
             </div>
@@ -632,14 +635,14 @@
             <div class="row justify-content-center text-center">
                 <div class="col-lg-8">
                     <h6 class="d-inline-block bg-light text-primary text-uppercase py-2 px-3 rounded-pill">Nuestro Equipo</h6>
-                    <h1 class="mb-4 font-weight-bold">Expertos en <span class="text-primary">Follajes Naturales</span></h1>
+                    <h2 class="mb-4 font-weight-bold">Expertos en <span class="text-primary">Follajes Naturales</span></h2>
                     <p class="lead mb-5">Conoce al equipo de profesionales que hace posible la excelencia en cada proyecto de Prime Green</p>
                 </div>
             </div>
             <div class="row justify-content-center">
                 <div class="col-lg-3 col-md-6">
                     <div class="team position-relative overflow-hidden mb-5 rounded-lg shadow-sm">
-                        <img class="img-fluid" src="img/a (1).png" alt="Director de Cultivos" style="width: 100%; height: 250px; object-fit: cover;">
+                        <img class="img-fluid" src="img/equipo-1.jpg" alt="Director de cultivos de Prime Green" width="600" height="800" loading="lazy" decoding="async" style="width: 100%; height: 250px; object-fit: cover;">
                         <div class="position-relative text-center">
                             <div class="team-text bg-primary text-white p-4">
                                 <h5 class="text-white text-uppercase font-weight-bold">Sebastián Rodríguez</h5>
@@ -655,7 +658,7 @@
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="team position-relative overflow-hidden mb-5 rounded-lg shadow-sm">
-                        <img class="img-fluid" src="img/a (2).png" alt="Especialista en Distribución" style="width: 100%; height: 250px; object-fit: cover;">
+                        <img class="img-fluid" src="img/equipo-2.jpg" alt="Especialista en distribución internacional de follajes" width="600" height="800" loading="lazy" decoding="async" style="width: 100%; height: 250px; object-fit: cover;">
                         <div class="position-relative text-center">
                             <div class="team-text bg-primary text-white p-4">
                                 <h5 class="text-white text-uppercase font-weight-bold">Felipe Torres</h5>
@@ -671,7 +674,7 @@
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="team position-relative overflow-hidden mb-5 rounded-lg shadow-sm">
-                        <img class="img-fluid" src="img/a (3).png" alt="Ingeniera Agrónoma" style="width: 100%; height: 250px; object-fit: cover;">
+                        <img class="img-fluid" src="img/equipo-3.jpg" alt="Ingeniera agrónoma del equipo de Prime Green" width="600" height="800" loading="lazy" decoding="async" style="width: 100%; height: 250px; object-fit: cover;">
                         <div class="position-relative text-center">
                             <div class="team-text bg-primary text-white p-4">
                                 <h5 class="text-white text-uppercase font-weight-bold">Sara Piedrahita</h5>
@@ -697,7 +700,7 @@
             <div class="row">
                 <div class="col-lg-6 pr-lg-5 mb-5">
                     <a href="index.html" class="navbar-brand">
-                        <h1 class="mb-3 text-white"><span class="text-primary">Prime Green</span> S.A.S</h1>
+                        <h2 class="mb-3 text-white"><span class="text-primary">Prime Green</span> S.A.S</h2>
                     </a>
                     <p class="text-light">Líderes en cultivo y distribución de follajes naturales de calidad premium. Especializados en brindar soluciones integrales para proyectos decorativos, paisajísticos y comerciales en todo el mundo.</p>
                     <p class="text-light"><i class="fa fa-map-marker-alt mr-2 text-primary"></i>Cachipay, Cundinamarca</p>
@@ -751,7 +754,7 @@
     </a>
 
     <!-- Back to Top -->
-    <a href="#" class="btn btn-lg btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+    <a href="#" class="btn btn-lg btn-primary back-to-top" aria-label="Volver arriba"><i class="fa fa-angle-double-up"></i></a>
 
 
     <!-- JavaScript Libraries -->
@@ -768,20 +771,13 @@
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="lib/easing/easing.min.js"></script>
+    <!-- counterup.min.js anima los contadores vía $.fn.waypoint, así que waypoints es obligatorio -->
     <script src="lib/waypoints/waypoints.min.js"></script>
     <script src="lib/counterup/counterup.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="lib/tempusdominus/js/moment.min.js"></script>
-    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
-    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
 
     <!-- Map functionality is now handled with custom JavaScript -->
-
-    <!-- Contact Javascript File -->
-    <script src="mail/jqBootstrapValidation.min.js"></script>
-    <script src="mail/contact.js"></script>
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
@@ -818,6 +814,20 @@
                 heroVideo.setAttribute('muted', '');
                 heroVideo.muted = true;
 
+                // ponytail: el hero pesa 21 MB, así que sólo se descarga donde aporta:
+                // se omite en pantallas pequeñas, con ahorro de datos o con movimiento reducido.
+                const wantsVideo = window.matchMedia('(min-width: 769px)').matches
+                    && !(navigator.connection && navigator.connection.saveData)
+                    && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+                if (wantsVideo) {
+                    const heroSource = document.createElement('source');
+                    heroSource.src = 'video/Video Prime.m4v';
+                    heroSource.type = 'video/mp4';
+                    heroVideo.appendChild(heroSource);
+                    heroVideo.load();
+                }
+
                 heroVideo.addEventListener('loadeddata', hideFallback, { once: true });
                 heroVideo.addEventListener('canplay', hideFallback, { once: true });
                 heroVideo.addEventListener('error', (event) => {
@@ -839,7 +849,9 @@
                     }
                 };
 
-                attemptPlay();
+                if (wantsVideo) {
+                    attemptPlay();
+                }
             }
         });
         
@@ -1142,7 +1154,7 @@
                         countries: ['Estados Unidos', 'Canadá', 'México'],
                         mainProduct: 'Follajes Premium para Oficinas y Hoteles',
                         description: 'Especializada en plantas de interior duraderas para el clima norteamericano. Nuestros follajes son perfectos para oficinas corporativas, hoteles de lujo y centros comerciales.',
-                        image: 'img/service-1.jpg',
+                        image: 'img/DSC00551.JPG',
                         demand: 'Alto',
                         specialties: ['Resistencia a climas fríos', 'Oficinas corporativas', 'Hoteles de lujo', 'Bajo mantenimiento']
                     },
@@ -1151,7 +1163,7 @@
                         countries: ['Brasil', 'Argentina', 'Chile', 'Colombia', 'Perú'],
                         mainProduct: 'Follajes Tropicales y Especies Nativas',
                         description: 'Amplia variedad de plantas tropicales y especies nativas ideales para resorts, spas y proyectos paisajísticos únicos en Sudamérica.',
-                        image: 'img/service-2.jpg',
+                        image: 'img/DSC00565.JPG',
                         demand: 'Alto',
                         specialties: ['Especies nativas', 'Proyectos paisajísticos', 'Resorts tropicales', 'Eventos especiales']
                     },
@@ -1160,7 +1172,7 @@
                         countries: ['España', 'Francia', 'Alemania', 'Italia', 'Reino Unido', 'Países Bajos', 'Bélgica'],
                         mainProduct: 'Follajes Mediterráneos y Sostenibles',
                         description: 'Plantas resistentes adaptadas al clima mediterráneo y follajes con alta capacidad de purificación del aire para espacios eco-friendly.',
-                        image: 'img/service-3.jpg',
+                        image: 'img/DSC00567.JPG',
                         demand: 'Medio',
                         specialties: ['Resistencia a sequía', 'Purificación del aire', 'Espacios sostenibles', 'Jardines mediterráneos']
                     },
@@ -1169,7 +1181,7 @@
                         countries: ['Japón', 'China', 'Corea del Sur', 'Australia', 'Nueva Zelanda', 'Tailandia', 'Singapur'],
                         mainProduct: 'Follajes Zen y Resistentes al Calor',
                         description: 'Plantas especializadas para espacios minimalistas estilo zen y follajes resistentes a climas áridos y calurosos del Pacífico.',
-                        image: 'img/service-4.jpg',
+                        image: 'img/DSC00598.JPG',
                         demand: 'Alto',
                         specialties: ['Estética zen', 'Resistencia al calor', 'Proyectos urbanos', 'Espacios minimalistas']
                     }
@@ -1203,7 +1215,7 @@
                                 <div class="modal-body p-4">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <img src="${regionInfo.image}" class="img-fluid rounded shadow-sm mb-3" alt="${regionInfo.mainProduct}" style="height: 250px; object-fit: cover; width: 100%;">
+                                            <img src="${regionInfo.image}" class="img-fluid rounded shadow-sm mb-3" alt="${regionInfo.mainProduct}" loading="lazy" decoding="async" style="height: 250px; object-fit: cover; width: 100%;">
                                         </div>
                                         <div class="col-md-6">
                                             <h4 class="text-primary mb-3 font-weight-bold">${regionInfo.mainProduct}</h4>
@@ -1391,6 +1403,7 @@
                         <div class="product-image-container mb-3" style="height: 180px; background: linear-gradient(45deg, #f8f9fa, #e9ecef); border-radius: 10px; overflow: hidden;">
                             <img src="${country.mainProduct.image}" 
                                  class="img-fluid w-100 h-100" 
+                                 loading="lazy" decoding="async"
                                  style="object-fit: cover;"
                                  alt="${country.mainProduct.name}"
                                  onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;d-flex align-items-center justify-content-center h-100&quot;><i class=&quot;fas fa-leaf fa-3x text-muted&quot;></i></div>';">
@@ -1629,7 +1642,7 @@
                         scientificName: "Nephrolepis exaltata",
                         description: "Helecho clásico con frondas elegantes, ideal para interiores y arreglos naturales",
                         detailedDescription: "Helecho clásico muy apreciado por su elegancia natural y facilidad de manejo. Perfecto para interiores y arreglos que requieren un toque natural sofisticado.",
-                        image: "img/DSC00592.png",
+                        image: "img/DSC00592.jpg",
                         characteristics: {
                             durability: "8-12 días",
                             height: "25-40 cm",
@@ -1730,7 +1743,8 @@
                             <div class="product-card" data-product-id="${product.id}">
                                 <div class="product-image-container">
                                     <img src="${product.image}" alt="${product.name}" class="product-image" 
-                                         onerror="this.src='img/service-1.jpg';">
+                                         loading="lazy" decoding="async"
+                                         onerror="this.src='img/carousel-1.jpg';">
                                     <div class="product-overlay" style="display: none;">
                                         <div class="product-badge">
                                             <span class="badge badge-luxury">${product.category}</span>
@@ -1892,7 +1906,7 @@
                     
                     <div class="modal-body p-0">
                         <div class="product-hero-image">
-                            <img src="${product.image}" class="img-fluid w-100" style="height: 280px; object-fit: cover;" alt="${product.name}">
+                            <img src="${product.image}" class="img-fluid w-100" loading="lazy" decoding="async" style="height: 280px; object-fit: cover;" alt="${product.name}">
                             <div class="hero-overlay">
                                 <div class="popularity-badge">
                                     ${generateStars(product.popularity)}

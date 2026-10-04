@@ -8,7 +8,7 @@ const countriesData = {
         mainProduct: {
             name: "Ruscus Premium",
             description: "Follaje de larga duración ideal para arreglos florales de lujo",
-            image: "img/DSC00592.png",
+            image: "img/DSC00592.jpg",
             demandLevel: "Muy Alto",
             exportVolume: "2,500 kg/mes"
         },
