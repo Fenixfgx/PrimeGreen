@@ -2020,7 +2020,13 @@ body {
 }
 
 .pg-person__media {
-  --alto-retrato: clamp(200px, 40vh, 380px);
+  /* 25 % más que el alto base original (200/40vh/380): el retrato dejaba 88 px
+     de tarjeta vacíos a cada lado a 1440 y se veía pequeño. Como la anchura
+     sale de la proporción 9:16, crece en las dos direcciones a la vez y sigue
+     entrando de sobra en la tarjeta (253 px de 379), así que no hay recorte.
+     Sólo llega a escritorio: móvil y pantallas bajas tienen su propio valor
+     más abajo en esta hoja. */
+  --alto-retrato: clamp(250px, 50vh, 475px);
   height: auto !important;
   aspect-ratio: 9 / 16;
   width: 100%;
