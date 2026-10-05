@@ -2131,17 +2131,19 @@ body {
 }
 
 .pg-person__media {
-  /* 25 % más que el alto base original (200/40vh/380): el retrato dejaba 88 px
-     de tarjeta vacíos a cada lado a 1440 y se veía pequeño. Como la anchura
-     sale de la proporción 9:16, crece en las dos direcciones a la vez y sigue
-     entrando de sobra en la tarjeta (253 px de 379), así que no hay recorte.
-     Sólo llega a escritorio: móvil y pantallas bajas tienen su propio valor
-     más abajo en esta hoja. */
-  --alto-retrato: clamp(250px, 50vh, 475px);
+  /* La foto manda, así que llena la tarjeta de lado a lado y su alto sale de la
+     proporción. 3:4 y no 9:16: la foto de Sebastián es 3:4 y las de Felipe y
+     Sara 9:16, así que con 9:16 se le comía a él un 25 % del ancho —los
+     costados—, que en un retrato es el peor recorte posible. Con 3:4 nadie
+     pierde por los lados, y a las dos verticales se les come pie, nunca cabeza,
+     que es el recorte que mejor perdona.
+     --alto-retrato sigue siendo el mando de las pantallas donde la sección no
+     cabe entera: al bajar su valor la foto se estrecha manteniendo la forma. */
+  --alto-retrato: clamp(280px, 57vh, 900px);
   height: auto !important;
-  aspect-ratio: 9 / 16;
+  aspect-ratio: 3 / 4;
   width: 100%;
-  max-width: min(100%, calc(var(--alto-retrato) * 9 / 16));
+  max-width: min(100%, calc(var(--alto-retrato) * 3 / 4));
   margin-inline: auto;
 }
 
@@ -2676,7 +2678,10 @@ body {
   }
 
   .pg-person__media {
-    flex: 0 0 36%;
+    /* 42 % y no 36 %: al pasar la foto a 3:4 quedaba más baja que antes en la
+       tarjeta horizontal, y aquí la foto es la protagonista. El ancho mayor la
+       devuelve al tamaño que tenía. */
+    flex: 0 0 42%;
     height: auto;
     --alto-retrato: clamp(160px, 30vh, 240px);
   }
@@ -2800,9 +2805,8 @@ body {
     --alto-foto: 820px;
   }
 
-  .pg-person__media {
-    --alto-retrato: 520px;
-  }
+  /* La del equipo no necesita mando aquí: llena la tarjeta por sí sola, y
+     topada en 520 px dejaría 80 px vacíos a cada lado a esta anchura. */
 }
 
 /* TV con mando: objetivos grandes y foco muy visible */
