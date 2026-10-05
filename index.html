@@ -205,14 +205,14 @@
 
     <!-- Font Awesome -->
     <!-- Font Awesome 6.4 (subset local: 8 KB en vez de 349 KB desde CDN) -->
-    <link href="css/fontawesome-subset.css?v=20261005b" rel="stylesheet">
+    <link href="css/fontawesome-subset.css?v=20261005c" rel="stylesheet">
 
     <!-- Swiper (carrusel) se carga bajo demanda desde el script, sólo cuando el
          usuario se acerca al catálogo: 151 KB + 34 KB de CSS que no bloquean la
          carga inicial. El mapa ya no descarga nada: es una imagen propia. -->
 
     <!-- Libraries Stylesheet -->
-    <link href="css/style.purged.min.css?v=20261005b" rel="stylesheet">
+    <link href="css/style.purged.min.css?v=20261005c" rel="stylesheet">
 
     <!-- La portada es el LCP del hero, pero ya va en el HTML con
          fetchpriority="high". El preload duplicaba la descarga y el navegador
@@ -222,9 +222,9 @@
     
     <!-- Prime Green Custom Styles -->
     <!-- ?v= rompe la caché: súbelo al publicar cambios de CSS o JS -->
-    <link href="css/prime-green-custom.css?v=20261005b" rel="stylesheet">
-    <link href="css/prime-green-sections.css?v=20261005b" rel="stylesheet">
-    <link href="css/folio.css?v=20261005b" rel="stylesheet">
+    <link href="css/prime-green-custom.css?v=20261005c" rel="stylesheet">
+    <link href="css/prime-green-sections.css?v=20261005c" rel="stylesheet">
+    <link href="css/folio.css?v=20261005c" rel="stylesheet">
 </head>
 
 <body>
@@ -448,6 +448,20 @@
                 </button>
             </div>
         </div>
+
+        <!-- Visor de fotos: se abre al pulsar cualquier imagen del mosaico.
+             Es un <dialog> nativo, así que el fondo queda inerte, el foco se
+             queda dentro y Escape cierra sin tener que programarlo. -->
+        <dialog class="pg-visor" id="pg-visor" aria-label="Fotos de la finca">
+            <img class="pg-visor__img" alt="">
+            <p class="pg-visor__cuenta" data-visor-cuenta aria-live="polite"></p>
+            <button type="button" class="pg-visor__btn pg-visor__btn--prev" data-visor-prev
+                    aria-label="Foto anterior"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
+            <button type="button" class="pg-visor__btn pg-visor__btn--next" data-visor-next
+                    aria-label="Foto siguiente"><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
+            <button type="button" class="pg-visor__btn pg-visor__btn--cerrar" data-visor-close
+                    aria-label="Cerrar el visor"><i class="fas fa-times" aria-hidden="true"></i></button>
+        </dialog>
     </section>
 
     <!-- ============================= Fincas ============================== -->
@@ -830,13 +844,13 @@
     <!-- Map functionality is now handled with custom JavaScript -->
 
     <!-- Template Javascript -->
-    <script src="js/main.js?v=20261005b"></script>
+    <script src="js/main.js?v=20261005c"></script>
     
     <!-- Countries Data -->
-    <script src="js/countries-data.js?v=20261005b"></script>
+    <script src="js/countries-data.js?v=20261005c"></script>
     
     <!-- Products Data -->
-    <script src="js/products-data.js?v=20261005b"></script>
+    <script src="js/products-data.js?v=20261005c"></script>
     
     <!-- Prime Green Custom JavaScript -->
     <script>
@@ -2615,6 +2629,112 @@
                             toggles.forEach(function (b) { b.hidden = false; });
                             setPaused(false);
                         }
+                    });
+                }
+
+                // ---- Visor de fotos de la galería ----------------------------
+                // Al pulsar una foto del mosaico se abre en grande, y desde ahí
+                // se pasa a las siguientes: no a las 5 que se ven, sino a las
+                // 18 tomas que van rotando, que son las que nadie alcanza a ver.
+                var visor = document.getElementById('pg-visor');
+                var mosaico = document.getElementById('pg-mosaic');
+
+                if (visor && mosaico && typeof visor.showModal === 'function') {
+                    var vImg = visor.querySelector('.pg-visor__img');
+                    var vCuenta = visor.querySelector('[data-visor-cuenta]');
+                    var vTiles = [].slice.call(mosaico.querySelectorAll('.pg-tile'));
+                    var vActual = 0;
+                    var pausaPrevia = false;
+                    var precarga = new Image();
+
+                    // La ventana de tamaños es la misma en el visor y en la
+                    // precarga, así que lo que se adelanta es justo lo que luego
+                    // se pide y el paso no se queda en blanco.
+                    function fuente(e) { return e.s + ' 800w, ' + e.l + ' 1600w'; }
+
+                    function indiceDe(src) {
+                        for (var k = 0; k < POOL.length; k++) {
+                            if (POOL[k].s === src) return k;
+                        }
+                        return 0;
+                    }
+
+                    function muestra(i) {
+                        vActual = (i + POOL.length) % POOL.length;
+                        var e = POOL[vActual];
+                        vImg.sizes = '92vw';
+                        vImg.srcset = fuente(e);
+                        vImg.src = e.l;
+                        vCuenta.textContent = (vActual + 1) + ' de ' + POOL.length;
+
+                        var sig = POOL[(vActual + 1) % POOL.length];
+                        precarga.sizes = '92vw';
+                        precarga.srcset = fuente(sig);
+                        precarga.src = sig.l;
+                    }
+
+                    // Las casillas se anuncian como botón sólo si el visor
+                    // funciona: sin JS no aparece una afordancia falsa.
+                    vTiles.forEach(function (fig) {
+                        var foto = fig.querySelector('[data-rot-img]');
+                        fig.tabIndex = 0;
+                        fig.setAttribute('role', 'button');
+                        fig.setAttribute('aria-haspopup', 'dialog');
+                        fig.setAttribute('aria-label', 'Ampliar foto: ' +
+                            ((foto && foto.getAttribute('alt')) || 'instalaciones de Prime Green'));
+                    });
+
+                    function abrirVisor(fig) {
+                        var foto = fig.querySelector('[data-rot-img]');
+                        vImg.alt = (foto && foto.getAttribute('alt')) || '';
+                        pausaPrevia = paused;
+                        setPaused(true);   // no tiene sentido seguir cambiando fotos detrás
+                        muestra(indiceDe(foto ? foto.getAttribute('src') : ''));
+                        visor.showModal();
+                    }
+
+                    function tileDe(ev) {
+                        return ev.target && ev.target.closest
+                            ? ev.target.closest('.pg-tile')
+                            : null;
+                    }
+
+                    mosaico.addEventListener('click', function (ev) {
+                        var fig = tileDe(ev);
+                        if (fig) abrirVisor(fig);
+                    });
+
+                    mosaico.addEventListener('keydown', function (ev) {
+                        if (ev.key !== 'Enter' && ev.key !== ' ' && ev.key !== 'Spacebar') return;
+                        var fig = tileDe(ev);
+                        if (!fig) return;
+                        ev.preventDefault();
+                        abrirVisor(fig);
+                    });
+
+                    visor.addEventListener('click', function (ev) {
+                        if (ev.target.closest('[data-visor-prev]')) muestra(vActual - 1);
+                        else if (ev.target.closest('[data-visor-next]')) muestra(vActual + 1);
+                        else if (ev.target.closest('[data-visor-close]')) visor.close();
+                        // Pulsar fuera de la foto cierra: el fondo es el propio
+                        // <dialog> a pantalla completa.
+                        else if (ev.target === visor) visor.close();
+                    });
+
+                    visor.addEventListener('keydown', function (ev) {
+                        if (ev.key === 'ArrowLeft') {
+                            ev.preventDefault();
+                            muestra(vActual - 1);
+                        } else if (ev.key === 'ArrowRight') {
+                            ev.preventDefault();
+                            muestra(vActual + 1);
+                        }
+                    });
+
+                    // Escape ya lo cierra el navegador; aquí sólo se le devuelve
+                    // el movimiento a la galería, respetando si estaba pausado.
+                    visor.addEventListener('close', function () {
+                        setPaused(pausaPrevia);
                     });
                 }
             })();

@@ -647,6 +647,117 @@ h1, h2, h3, .pg-display {
 .pg-tile--d { grid-column: span 4; }
 .pg-tile--e { grid-column: span 3; }
 
+/* ---- Visor de fotos: se abre al pulsar una imagen del mosaico ------------
+   El `:not([open])` no sobra: un `display` de autor gana al `display: none`
+   que el navegador aplica a los <dialog> cerrados, así que sin esa línea el
+   visor estaría siempre a la vista. */
+.pg-visor {
+  position: fixed;
+  inset: 0;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: clamp(2.5rem, 6vh, 3.5rem) clamp(0.75rem, 5vw, 4.5rem);
+  border: 0;
+  background: transparent;
+  /* columna y no rejilla: con `place-items: center` la fila se dimensiona por
+     su contenido, así que el `max-height: 100%` de la foto se vuelve circular
+     y el navegador lo ignora (la foto se salía por abajo en 1440x900). */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.5rem, 1.6vh, 1rem);
+  overflow: hidden;
+}
+
+.pg-visor:not([open]) {
+  display: none;
+}
+
+.pg-visor::backdrop {
+  background: rgba(10, 20, 14, 0.9);
+  backdrop-filter: blur(4px);
+}
+
+/* El hueco de abajo es para el contador: va en el flujo, pegado a la foto,
+   en vez de flotando al pie de la ventana. */
+.pg-visor__img {
+  max-width: 100%;
+  max-height: calc(100% - 2.5rem);
+  width: auto;
+  height: auto;
+  border-radius: var(--pg-r-md);
+  box-shadow: var(--pg-shadow-3);
+}
+
+.pg-visor__cuenta {
+  margin: 0;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(250, 248, 242, 0.7);
+}
+
+.pg-visor__btn {
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(250, 248, 242, 0.14);
+  color: #fff;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: background-color var(--pg-fast) var(--pg-ease);
+}
+
+.pg-visor__btn:hover,
+.pg-visor__btn:focus-visible {
+  background: var(--pg-green-700);
+}
+
+.pg-visor__btn--prev {
+  left: clamp(0.5rem, 2vw, 1.75rem);
+  top: calc(50% - 26px);
+}
+
+.pg-visor__btn--next {
+  right: clamp(0.5rem, 2vw, 1.75rem);
+  top: calc(50% - 26px);
+}
+
+.pg-visor__btn--cerrar {
+  top: 0;
+  right: clamp(0.5rem, 2vw, 1.75rem);
+}
+
+/* En pantallas justas los botones se achican para no comerse la foto */
+@media (max-width: 575.98px) {
+  .pg-visor__btn {
+    width: 44px;
+    height: 44px;
+    font-size: 0.9rem;
+  }
+
+  .pg-visor__btn--prev {
+    left: 0.3rem;
+    top: calc(50% - 22px);
+  }
+
+  .pg-visor__btn--next {
+    right: 0.3rem;
+    top: calc(50% - 22px);
+  }
+}
+
 /* ---------------------------------------------------------- 8. Fincas */
 .pg-farms {
   display: grid;
