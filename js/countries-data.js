@@ -8,8 +8,8 @@ const countriesData = {
         mainProduct: {
             name: "Ruscus Premium",
             description: "Follaje de larga duración ideal para arreglos florales de lujo",
-            image: "img/DSC00592.jpg",
-            demandLevel: "Muy Alto",
+            image: "img/DSC00592.webp",
+            demandLevel: "Alta",
             exportVolume: "2,500 kg/mes"
         },
         marketInfo: {
@@ -18,7 +18,6 @@ const countriesData = {
             mainCities: ["Nueva York", "Los Ángeles", "Miami"]
         },
         icon: "fas fa-leaf",
-        color: "#2E7D32"
     },
     "canada": {
         name: "Canadá",
@@ -28,8 +27,8 @@ const countriesData = {
         mainProduct: {
             name: "Eucalipto Gunni",
             description: "Eucalipto resistente al frío con aroma distintivo",
-            image: "img/DSC00551.JPG",
-            demandLevel: "Alto",
+            image: "img/DSC00551.webp",
+            demandLevel: "Media",
             exportVolume: "1,800 kg/mes"
         },
         marketInfo: {
@@ -38,7 +37,6 @@ const countriesData = {
             mainCities: ["Toronto", "Vancouver", "Montreal"]
         },
         icon: "fas fa-leaf",
-        color: "#388E3C"
     },
     "mexico": {
         name: "México",
@@ -48,8 +46,8 @@ const countriesData = {
         mainProduct: {
             name: "Ruscus Tropical",
             description: "Variedad tropical adaptada al clima cálido mexicano",
-            image: "img/DSC00565.JPG",
-            demandLevel: "Alto",
+            image: "img/DSC00565.webp",
+            demandLevel: "Media",
             exportVolume: "2,200 kg/mes"
         },
         marketInfo: {
@@ -58,7 +56,6 @@ const countriesData = {
             mainCities: ["Ciudad de México", "Guadalajara", "Monterrey"]
         },
         icon: "fas fa-seedling",
-        color: "#43A047"
     },
     "brazil": {
         name: "Brasil",
@@ -68,8 +65,8 @@ const countriesData = {
         mainProduct: {
             name: "Tree Fern Brasileño",
             description: "Helecho arbóreo nativo con propiedades únicas",
-            image: "img/DSC00567.JPG",
-            demandLevel: "Muy Alto",
+            image: "img/DSC00567.webp",
+            demandLevel: "Alta",
             exportVolume: "3,500 kg/mes"
         },
         marketInfo: {
@@ -78,7 +75,6 @@ const countriesData = {
             mainCities: ["São Paulo", "Río de Janeiro", "Brasilia"]
         },
         icon: "fas fa-tree",
-        color: "#4CAF50"
     },
     "colombia": {
         name: "Colombia",
@@ -88,8 +84,8 @@ const countriesData = {
         mainProduct: {
             name: "Ruscus Andino",
             description: "Follaje de alta montaña con resistencia excepcional",
-            image: "img/DSC00598.JPG",
-            demandLevel: "Extremo",
+            image: "img/DSC00598.webp",
+            demandLevel: "Alta",
             exportVolume: "4,200 kg/mes"
         },
         marketInfo: {
@@ -98,7 +94,6 @@ const countriesData = {
             mainCities: ["Bogotá", "Medellín", "Cali"]
         },
         icon: "fas fa-spa",
-        color: "#66BB6A"
     },
     "argentina": {
         name: "Argentina",
@@ -108,8 +103,8 @@ const countriesData = {
         mainProduct: {
             name: "Eucalipto Patagónico",
             description: "Variedad resistente al frío de la Patagonia argentina",
-            image: "img/DSC00633.JPG",
-            demandLevel: "Alto",
+            image: "img/DSC00633.webp",
+            demandLevel: "Media",
             exportVolume: "1,900 kg/mes"
         },
         marketInfo: {
@@ -118,7 +113,6 @@ const countriesData = {
             mainCities: ["Buenos Aires", "Córdoba", "Rosario"]
         },
         icon: "fas fa-seedling",
-        color: "#81C784"
     },
     "spain": {
         name: "España",
@@ -128,8 +122,8 @@ const countriesData = {
         mainProduct: {
             name: "Ruscus Mediterráneo",
             description: "Follaje clásico mediterráneo de máxima calidad",
-            image: "img/DSC00660.JPG",
-            demandLevel: "Muy Alto",
+            image: "img/DSC00660.webp",
+            demandLevel: "Alta",
             exportVolume: "2,800 kg/mes"
         },
         marketInfo: {
@@ -138,7 +132,6 @@ const countriesData = {
             mainCities: ["Madrid", "Barcelona", "Valencia"]
         },
         icon: "fas fa-leaf",
-        color: "#A5D6A7"
     },
     "france": {
         name: "Francia",
@@ -148,8 +141,8 @@ const countriesData = {
         mainProduct: {
             name: "Ruscus Francés",
             description: "Follaje de lujo para la alta floristería francesa",
-            image: "img/DSC00963.JPG",
-            demandLevel: "Premium",
+            image: "img/DSC00963.webp",
+            demandLevel: "Emergente",
             exportVolume: "2,400 kg/mes"
         },
         marketInfo: {
@@ -158,7 +151,6 @@ const countriesData = {
             mainCities: ["París", "Lyon", "Marsella"]
         },
         icon: "fas fa-spa",
-        color: "#C8E6C9"
     },
     "germany": {
         name: "Alemania",
@@ -168,8 +160,8 @@ const countriesData = {
         mainProduct: {
             name: "Eucalipto Nórdico",
             description: "Eucalipto adaptado para climas templados del norte",
-            image: "img/DSC00996.JPG",
-            demandLevel: "Alto",
+            image: "img/DSC00996.webp",
+            demandLevel: "Media",
             exportVolume: "2,100 kg/mes"
         },
         marketInfo: {
@@ -178,7 +170,6 @@ const countriesData = {
             mainCities: ["Berlín", "Múnich", "Hamburgo"]
         },
         icon: "fas fa-tree",
-        color: "#E8F5E8"
     },
     "japan": {
         name: "Japón",
@@ -188,8 +179,8 @@ const countriesData = {
         mainProduct: {
             name: "Ruscus Zen",
             description: "Follaje minimalista para arreglos estilo japonés",
-            image: "img/DSC00551.JPG",
-            demandLevel: "Premium",
+            image: "img/DSC00551.webp",
+            demandLevel: "Emergente",
             exportVolume: "1,600 kg/mes"
         },
         marketInfo: {
@@ -198,7 +189,6 @@ const countriesData = {
             mainCities: ["Tokio", "Osaka", "Kioto"]
         },
         icon: "fas fa-spa",
-        color: "#2E7D32"
     },
     "australia": {
         name: "Australia",
@@ -208,8 +198,8 @@ const countriesData = {
         mainProduct: {
             name: "Eucalipto Nativo",
             description: "Eucalipto australiano original de máxima pureza",
-            image: "img/DSC00565.JPG",
-            demandLevel: "Extremo",
+            image: "img/DSC00565.webp",
+            demandLevel: "Alta",
             exportVolume: "3,200 kg/mes"
         },
         marketInfo: {
@@ -218,7 +208,6 @@ const countriesData = {
             mainCities: ["Sídney", "Melbourne", "Brisbane"]
         },
         icon: "fas fa-tree",
-        color: "#388E3C"
     },
     "singapore": {
         name: "Singapur",
@@ -228,8 +217,8 @@ const countriesData = {
         mainProduct: {
             name: "Ruscus Tropical Premium",
             description: "Follaje tropical de lujo para diseño urbano moderno",
-            image: "img/DSC00567.JPG",
-            demandLevel: "Luxury",
+            image: "img/DSC00567.webp",
+            demandLevel: "Emergente",
             exportVolume: "800 kg/mes"
         },
         marketInfo: {
@@ -238,7 +227,6 @@ const countriesData = {
             mainCities: ["Singapur"]
         },
         icon: "fas fa-leaf",
-        color: "#43A047"
     }
 };
 

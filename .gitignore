@@ -1,0 +1,7 @@
+# Informe de auditoría de diseño: documento de trabajo interno.
+# El repo es público y GitHub Pages sirve la raíz, así que dejarlo fuera
+# evita que quede legible en el dominio del sitio.
+diseño.md
+
+# Configuración local del editor
+.vscode/

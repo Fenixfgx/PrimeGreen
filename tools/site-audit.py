@@ -116,6 +116,9 @@ for dead in ("mail/", "owlcarousel", "tempusdominus", "service-1.jpg", "carousel
 
 # ---------- 7. weight of first render vs deferred ----------
 def kb(path):
+    # las rutas del HTML llevan ?v= de caché: sin limpiarlo os.path.exists
+    # siempre fallaba y el peso crítico se reportaba como 0.
+    path = path.split("?")[0].split("#")[0]
     return os.path.getsize(path) / 1024 if os.path.exists(path) else 0
 
 eager = deferred = 0.0
@@ -130,7 +133,8 @@ for tag in re.findall(r"<img\b[^>]*>", html):
 
 critical = sum(kb(p) for p in re.findall(r'(?:href|src)="((?:css|lib|js)/[^"]+)"', html))
 poster = kb("img/carousel-1.jpg")
-video = kb("video/Video Prime.m4v")
+reels_dir = "video/reels"
+reels = sum(kb(os.path.join(reels_dir, f)) for f in os.listdir(reels_dir)) if os.path.isdir(reels_dir) else 0
 
 print(f"checked local refs   : {checked}")
 print(f"h1 / h2 tags         : {len(h1s)} / {h2s}")
@@ -140,7 +144,7 @@ print(f"eager images         : {eager:8.0f} KB")
 print(f"lazy images          : {deferred:8.0f} KB (deferred)")
 print(f"local css+js         : {critical:8.0f} KB")
 print(f"hero poster (LCP)    : {poster:8.0f} KB")
-print(f"hero video           : {video:8.0f} KB (desktop only, after load)")
+print(f"reels video          : {reels:8.0f} KB (deferred, tras interacción)")
 print(f"FIRST RENDER approx  : {eager + critical + poster:8.0f} KB")
 
 for w in warnings:

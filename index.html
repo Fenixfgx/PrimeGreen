@@ -191,37 +191,44 @@
     <link href="assets/logo.png" rel="apple-touch-icon">
 
     <!-- Google Web Fonts -->
+    <!-- Se cargan sin bloquear el render: la primera pintura usa la fuente del
+         sistema y Playfair/Poppins entran en cuanto llegan (display=swap ya
+         está en la URL). Ahorra ~1 s de bloqueo con la red del usuario. -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" media="print" onload="this.media='all'; this.onload=null"
+          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Poppins:wght@400;500;600;700&display=swap">
+    <noscript>
+        <link rel="stylesheet"
+              href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Poppins:wght@400;500;600;700&display=swap">
+    </noscript>
 
-    <!-- Preconnect to the CDNs that serve render-critical CSS/JS -->
+    <!-- Preconnect to the CDN that serves the deferred carousel -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="preconnect" href="https://unpkg.com" crossorigin>
 
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Font Awesome 6.4 (subset local: 8 KB en vez de 349 KB desde CDN) -->
+    <link href="css/fontawesome-subset.css?v=20261005b" rel="stylesheet">
 
-    <!-- Leaflet CSS for OpenStreetMap -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
-          crossorigin=""/>
-
-    <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Swiper (carrusel) se carga bajo demanda desde el script, sólo cuando el
+         usuario se acerca al catálogo: 151 KB + 34 KB de CSS que no bloquean la
+         carga inicial. El mapa ya no descarga nada: es una imagen propia. -->
 
     <!-- Libraries Stylesheet -->
-    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="css/style.purged.min.css?v=20261005b" rel="stylesheet">
 
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/style.min.css" rel="stylesheet">
+    <!-- La portada es el LCP del hero, pero ya va en el HTML con
+         fetchpriority="high". El preload duplicaba la descarga y el navegador
+         avisaba de que la variante precargada no se usaba. -->
+    <!-- Customized Bootstrap Stylesheet (ya cargado arriba; el duplicado se eliminó) -->
+
     
     <!-- Prime Green Custom Styles -->
-    <link href="css/prime-green-custom.css" rel="stylesheet">
+    <!-- ?v= rompe la caché: súbelo al publicar cambios de CSS o JS -->
+    <link href="css/prime-green-custom.css?v=20261005b" rel="stylesheet">
+    <link href="css/prime-green-sections.css?v=20261005b" rel="stylesheet">
+    <link href="css/folio.css?v=20261005b" rel="stylesheet">
 </head>
 
 <body>
@@ -262,10 +269,10 @@
         <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-lg-3 shadow-sm">
             <!-- Mobile Brand Name (visible only on mobile) -->
             <a href="#inicio" class="navbar-brand d-lg-none">
-                <img src="assets/logo.png" alt="Prime Green" class="logo-img-mobile" style="height: 40px;">
+                <img src="assets/logo.webp" alt="Prime Green" class="logo-img-mobile" width="380" height="174" style="height: 40px;" decoding="async">
             </a>
             
-            <button type="button" class="navbar-toggler ml-auto" data-toggle="collapse" data-target="#navbarCollapse" aria-expanded="false">
+            <button type="button" class="navbar-toggler ml-auto" data-toggle="collapse" data-target="#navbarCollapse" aria-expanded="false" aria-controls="navbarCollapse" aria-label="Abrir menú de navegación">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
@@ -280,7 +287,7 @@
                 <!-- Centered Logo (visible only on desktop) -->
                 <div class="navbar-brand-center d-none d-lg-flex">
                     <a href="#inicio" class="navbar-brand">
-                        <img src="assets/logo.png" alt="Prime Green" class="logo-img">
+                        <img src="assets/logo.webp" alt="Prime Green" class="logo-img" width="380" height="174" decoding="async">
                     </a>
                 </div>
                 
@@ -296,453 +303,511 @@
     <!-- Navbar End -->
 
 
-    <!-- Hero Video Section Start -->
-    <div class="container-fluid p-0 mb-5 pb-5 main-content hero-video-section" id="inicio">
-        <div class="position-relative" style="min-height: 100vh; overflow: hidden;">
-            <!-- Local Video Background -->
-            <div class="position-absolute w-100 h-100 hero-video-fallback"></div>
+    <!-- ============================= Portada ============================= -->
+    <header class="pg-hero main-content" id="inicio">
+        <div class="pg-hero__media">
+            <img class="pg-hero__img" src="img/drone/hero-1920.webp"
+                 srcset="img/drone/hero-1280.webp 1280w, img/drone/hero-1920.webp 1920w, img/drone/hero-2560.webp 2560w"
+                 sizes="100vw"
+                 alt="Vista aérea de los cultivos de follajes de Prime Green en Cachipay, Cundinamarca"
+                 width="2560" height="1440" fetchpriority="high" decoding="async">
+            <!-- Vídeo de fondo de la portada. `data-src` en vez de `src` a
+                 propósito: son ~5,7 MB, así que no se pide nada hasta que el
+                 JS decide (pantalla grande, sin ahorro de datos y sin
+                 «reducir movimiento»). Mientras no esté listo, o si falla, se
+                 ve la foto con su ken burns: la portada nunca queda vacía. -->
+            <video class="pg-hero__video" data-src="video/hero-720.mp4"
+                   poster="img/drone/hero-1920.webp"
+                   muted loop playsinline autoplay preload="none"
+                   aria-hidden="true" tabindex="-1"></video>
+            <div class="pg-hero__scrim"></div>
+        </div>
 
-            <video 
-                id="hero-video"
-                class="position-absolute w-100 h-100 hero-background-video" 
-                muted
-                loop
-                playsinline
-                preload="none"
-                poster="img/carousel-1.jpg"
-                aria-hidden="true"
-                style="object-fit: cover; pointer-events: none; z-index: 1;">
-                <!-- ponytail: la fuente se inyecta por JS sólo si el equipo lo permite, para no
-                     descargar 21 MB en móviles. Recomprimido con ffmpeg bajaría a ~3 MB. -->
-            </video>
-            
-            <!-- Overlay for better text readability -->
-            <div class="position-absolute w-100 h-100 hero-overlay" style="z-index: 2;"></div>
-            
-            <!-- Text Content -->
-            <div class="position-absolute w-100 h-100 d-flex flex-column align-items-center justify-content-center hero-content" style="z-index: 3;">
-                <div class="text-center p-3" style="max-width: 900px;">
-                    <h6 class="text-white text-uppercase mb-3 animate__animated animate__fadeInDown" style="letter-spacing: 3px; text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">Prime Green - Follajes Naturales</h6>
-                    <h1 class="display-3 text-white mb-4" style="text-shadow: 0 0 10px rgba(255,255,255,0.5); font-weight: 300; letter-spacing: 2px; font-family: 'Georgia', 'Times New Roman', serif; text-transform: uppercase; line-height: 1.1;">Nuestros Verdes en el Mundo</h1>
-                    <p class="lead text-white mx-md-5 px-3 mb-4 animate__animated animate__fadeInUp animate__delay-1s" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.7); font-size: 1.3rem;">Especializados en el cultivo y distribución de follajes de la más alta calidad, llevando la naturaleza a cada rincón del mundo</p>
-                    <a class="btn btn-outline-light btn-lg py-3 px-5 mt-3 animate__animated animate__fadeInUp animate__delay-2s" href="#nuestros-verdes" style="border-width: 2px; letter-spacing: 1px; font-weight: 600;">Conoce Más</a>
+        <div class="pg-hero__inner pg-container">
+            <p class="pg-eyebrow pg-eyebrow--light">Cachipay, Cundinamarca · Colombia</p>
+            <h1 class="pg-hero__title">Follajes naturales <br>que viajan por el mundo</h1>
+            <p class="pg-hero__lede">
+                Cultivamos, seleccionamos y exportamos follaje premium para floristería,
+                decoración y paisajismo. Del invernadero a su destino, sin perder frescura.
+            </p>
+
+            <div class="pg-hero__actions">
+                <a class="pg-btn pg-btn--solid" href="#catalogo">Ver catálogo</a>
+                <a class="pg-btn pg-btn--ghost" href="#reels"><i class="fas fa-play" aria-hidden="true"></i> Ver la finca en video</a>
+            </div>
+
+            <dl class="pg-hero__stats">
+                <div class="pg-hero__stat">
+                    <dt>15</dt>
+                    <dd>Años de experiencia</dd>
+                </div>
+                <div class="pg-hero__stat">
+                    <dt>500+</dt>
+                    <dd>Clientes en el mundo</dd>
+                </div>
+                <div class="pg-hero__stat pg-hero__stat--wide">
+                    <dt>12</dt>
+                    <dd>Países de destino</dd>
+                </div>
+                <div class="pg-hero__stat pg-hero__stat--wide">
+                    <dt>40+</dt>
+                    <dd>Variedades de follaje</dd>
+                </div>
+            </dl>
+        </div>
+
+        <a class="pg-hero__cue" href="#acerca" aria-label="Bajar a la siguiente sección">
+            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </a>
+    </header>
+
+    <!-- ============================ Nosotros ============================= -->
+    <section class="pg-section pg-about" id="acerca">
+        <div class="pg-container">
+            <div class="pg-about__grid">
+                <figure class="pg-about__media pg-reveal" data-rotator>
+                    <img class="pg-about__main" data-rot-img="big"
+                         src="img/drone/p09-800.webp"
+                 srcset="img/drone/p09-800.webp 800w, img/drone/p09-1600.webp 1600w" sizes="(min-width: 992px) 42vw, 92vw"
+                         alt="Invernaderos y cultivos de follaje vistos desde el aire"
+                         width="1600" height="1200" loading="lazy" decoding="async">
+                    <button type="button" class="pg-rot-toggle" data-rot-toggle
+                            aria-pressed="false" aria-label="Pausar el cambio automático de imágenes">
+                        <span class="pg-rot-toggle__glyph" aria-hidden="true"></span>
+                    </button>
+                </figure>
+
+                <div class="pg-about__body pg-reveal" data-delay="1">
+                    <p class="pg-eyebrow">La finca</p>
+                    <h2 class="pg-section__title">Tres generaciones cultivando follaje de <em>exportación</em></h2>
+                    <p class="pg-lede">
+                        En Prime Green producimos follajes naturales de la más alta calidad en Cachipay,
+                        Cundinamarca. Cada variedad se cultiva, corta y empaca bajo control fitosanitario
+                        para llegar en perfecto estado a floristerías, decoradores y mayoristas de todo el mundo.
+                    </p>
+
+                    <ul class="pg-checks">
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Corte y poscosecha el mismo día</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Certificación fitosanitaria para exportación</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Empaque especializado y cadena de frío</li>
+                    </ul>
+
+                    <dl class="pg-metrics">
+                        <div class="pg-metric">
+                            <dt data-toggle="counter-up">15</dt>
+                            <dd>Años de experiencia</dd>
+                        </div>
+                        <div class="pg-metric">
+                            <dt data-toggle="counter-up">500</dt>
+                            <dd>Clientes satisfechos</dd>
+                        </div>
+                        <div class="pg-metric">
+                            <dt data-toggle="counter-up">40</dt>
+                            <dd>Variedades</dd>
+                        </div>
+                    </dl>
                 </div>
             </div>
         </div>
-        </div>
-    </div>
-    <!-- Carousel End -->
+    </section>
 
+    <!-- ============================ Galería ============================== -->
+    <section class="pg-section pg-section--tint" id="galeria">
+        <div class="pg-container">
+            <div class="pg-section__head pg-section__head--center pg-reveal">
+                <p class="pg-eyebrow">La finca en imágenes</p>
+                <h2 class="pg-section__title">40 hectáreas de cultivo <em>vistas desde el aire</em></h2>
+            </div>
 
-    <!-- About Start -->
-    <div class="container-fluid py-5" id="acerca">
-        <div class="container py-5">
-            <div class="row align-items-center">
-                <div class="col-lg-6 pb-5 pb-lg-0">
-                    <img class="img-fluid w-100 rounded shadow-lg" src="img/DSC00592.jpg" alt="Cultivo de follajes naturales de Prime Green en Cachipay, Cundinamarca" width="900" height="600" decoding="async">
-                </div>
-                <div class="col-lg-6">
-                    <h6 class="d-inline-block text-primary text-uppercase bg-light py-2 px-3 rounded-pill">Acerca de Nosotros</h6>
-                    <h2 class="mb-4 font-weight-bold">Prime Green - Líderes en <span class="text-primary">Follajes Naturales</span></h2>
-                    <p class="pl-4 border-left border-primary lead">En Prime Green, nos especializamos en el cultivo, producción y distribución de follajes naturales de la más alta calidad. Con años de experiencia en el sector, hemos llevado la belleza natural a hogares, oficinas y espacios comerciales alrededor del mundo.</p>
-                    <div class="row pt-4">
-                        <div class="col-6">
-                            <div class="bg-light text-center p-4 rounded-lg shadow-sm">
-                                <h3 class="display-4 text-primary font-weight-bold" data-toggle="counter-up">15</h3>
-                                <h6 class="text-uppercase font-weight-medium">Años de Experiencia</h6>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="bg-light text-center p-4 rounded-lg shadow-sm">
-                                <h3 class="display-4 text-primary font-weight-bold" data-toggle="counter-up">500</h3>
-                                <h6 class="text-uppercase font-weight-medium">Clientes Satisfechos</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <!-- Mosaico rotativo: las tomas de dron van pasando de una casilla
+                 pequeña a la grande (la pequeña se agranda y en la pequeña
+                 entra la siguiente). El botón permite detener el movimiento.
+                 Las fotos iniciales son la ventana de partida del guion
+                 (ver «Cambio de fotos» en css/folio.css): así el relevo de la
+                 primera casilla pequeña a la grande se cumple ya en el primer
+                 compás y no hay salto al arrancar. -->
+            <div class="pg-mosaic" id="pg-mosaic" data-rotator>
+                <figure class="pg-tile pg-tile--a pg-reveal">
+                    <img class="pg-tile__img" data-rot-img="big" src="img/drone/p18-800.webp"
+                         srcset="img/drone/p18-800.webp 800w, img/drone/p18-1600.webp 1600w"
+                         sizes="(min-width: 992px) 38vw, 92vw"
+                         alt="Instalaciones de Prime Green vistas desde el aire" width="1600" height="1200" loading="lazy" decoding="async">
+                    <figcaption class="pg-tile__cap">Instalaciones de Prime Green · Cachipay, Cundinamarca</figcaption>
+                </figure>
+                <figure class="pg-tile pg-tile--b pg-reveal" data-delay="1">
+                    <img class="pg-tile__img" data-rot-img src="img/drone/p01-800.webp" alt="Instalaciones de Prime Green vistas desde el aire" width="800" height="600" loading="lazy" decoding="async">
+                </figure>
+                <figure class="pg-tile pg-tile--c pg-reveal" data-delay="2">
+                    <img class="pg-tile__img" data-rot-img src="img/drone/p02-800.webp" alt="Instalaciones de Prime Green vistas desde el aire" width="800" height="600" loading="lazy" decoding="async">
+                </figure>
+                <figure class="pg-tile pg-tile--d pg-reveal" data-delay="1">
+                    <img class="pg-tile__img" data-rot-img src="img/drone/p03-800.webp" alt="Instalaciones de Prime Green vistas desde el aire" width="800" height="600" loading="lazy" decoding="async">
+                </figure>
+                <figure class="pg-tile pg-tile--e pg-reveal" data-delay="2">
+                    <img class="pg-tile__img" data-rot-img src="img/drone/p04-800.webp" alt="Instalaciones de Prime Green vistas desde el aire" width="800" height="600" loading="lazy" decoding="async">
+                </figure>
+                <button type="button" class="pg-rot-toggle" data-rot-toggle
+                        aria-pressed="false" aria-label="Pausar el cambio automático de imágenes">
+                    <span class="pg-rot-toggle__glyph" aria-hidden="true"></span>
+                </button>
             </div>
         </div>
-    </div>
-    <!-- About End -->
+    </section>
 
+    <!-- ============================= Fincas ============================== -->
+    <section class="pg-section" id="nuestras-fincas">
+        <div class="pg-container">
+            <div class="pg-section__head pg-reveal">
+                <p class="pg-eyebrow">Nuestras instalaciones</p>
+                <h2 class="pg-section__title">De Colombia para el <em>mundo</em></h2>
+                <p class="pg-lede">
+                    Cuatro áreas especializadas donde cada follaje se cultiva, controla y prepara
+                    para la exportación internacional.
+                </p>
+            </div>
 
-    <!-- Nuestros Verdes Start -->
-    <div class="container-fluid px-0 py-5 my-5" id="nuestros-verdes">
-        <div class="row mx-0 justify-content-center text-center">
-            <div class="col-lg-8">
-                <h6 class="d-inline-block bg-light text-primary text-uppercase py-2 px-3 rounded-pill">Nuestros Verdes en el Mundo</h6>
-                <h2 class="mb-4 font-weight-bold">Presencia <span class="text-primary">Global</span> en Follajes Premium</h2>
-                <p class="lead mb-5">Desde nuestras fincas hasta los rincones más exclusivos del mundo, llevamos la excelencia en follajes naturales a cada lugar. Haz clic en cualquier país para conocer nuestros productos más populares en esa región.</p>
+            <div class="pg-farms">
+                <article class="pg-farm pg-reveal">
+                    <figure class="pg-farm__media">
+                        <img src="img/drone/p08-800.webp" alt="Finca principal de Prime Green" width="800" height="600" loading="lazy" decoding="async">
+                        <span class="pg-farm__num">01</span>
+                    </figure>
+                    <div class="pg-farm__body">
+                        <h3 class="pg-farm__title">Finca Principal</h3>
+                        <p class="pg-farm__text">Centro de operaciones, laboratorio de control y oficinas administrativas.</p>
+                        <ul class="pg-chips">
+                            <li>Laboratorio</li>
+                            <li>Distribución</li>
+                            <li>Oficinas</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="pg-farm pg-reveal" data-delay="1">
+                    <figure class="pg-farm__media">
+                        <img src="img/drone/p11-800.webp" alt="Cultivos tropicales de follaje" width="800" height="600" loading="lazy" decoding="async">
+                        <span class="pg-farm__num">02</span>
+                    </figure>
+                    <div class="pg-farm__body">
+                        <h3 class="pg-farm__title">Cultivos Tropicales</h3>
+                        <p class="pg-farm__text">Follajes tropicales con riego automatizado y control climático avanzado.</p>
+                        <ul class="pg-chips">
+                            <li>Riego automático</li>
+                            <li>Humedad</li>
+                            <li>Nutrición</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="pg-farm pg-reveal" data-delay="2">
+                    <figure class="pg-farm__media">
+                        <img src="img/drone/p17-800.webp" alt="Invernaderos de producción" width="800" height="600" loading="lazy" decoding="async">
+                        <span class="pg-farm__num">03</span>
+                    </figure>
+                    <div class="pg-farm__body">
+                        <h3 class="pg-farm__title">Invernaderos</h3>
+                        <p class="pg-farm__text">Instalaciones climatizadas para las variedades más delicadas.</p>
+                        <ul class="pg-chips">
+                            <li>Clima controlado</li>
+                            <li>Iluminación LED</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="pg-farm pg-reveal" data-delay="3">
+                    <figure class="pg-farm__media">
+                        <img src="img/drone/p18-800.webp" alt="Área de control de calidad" width="800" height="600" loading="lazy" decoding="async">
+                        <span class="pg-farm__num">04</span>
+                    </figure>
+                    <div class="pg-farm__body">
+                        <h3 class="pg-farm__title">Control de Calidad</h3>
+                        <p class="pg-farm__text">Cada tallo pasa por análisis fitosanitario antes de empacarse.</p>
+                        <ul class="pg-chips">
+                            <li>Análisis</li>
+                            <li>Certificación</li>
+                            <li>Empaque</li>
+                        </ul>
+                    </div>
+                </article>
             </div>
         </div>
-        
-        <!-- Interactive OSM World Map -->
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-12">
-                    <div class="world-map-container position-relative bg-white p-4 rounded shadow-lg">
-                        <div class="row">
-                            <!-- Mapa OSM -->
-                            <div class="col-lg-12" id="map-column">
-                                <div class="map-wrapper position-relative">
-                                    <div id="world-map" style="height: 500px; border-radius: 15px; overflow: hidden;"></div>
-                                </div>
-                            </div>
-                            
-                            <!-- Sidebar de información (inicialmente oculto) -->
-                            <div class="col-lg-4" id="country-sidebar" style="display: none;">
-                                <div class="country-info-panel h-100 bg-light rounded-lg p-4 shadow-sm">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h5 class="mb-0 font-weight-bold text-primary" id="sidebar-title">Información del País</h5>
-                                        <button type="button" class="btn btn-sm btn-light" id="close-sidebar">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                    
-                                    <div id="sidebar-content">
-                                        <!-- El contenido se llenará dinámicamente -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Nuestros Verdes End -->
-    <!-- Nuestras Fincas Start -->
-    <div class="container-fluid py-5" id="nuestras-fincas" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding-top: 0px !important;">
-        <div class="container py-5">
-            <!-- Encabezado de la sección -->
-            <div class="row mb-5">
-                <div class="col-12 text-center">
-                    <h6 class="d-inline-block text-white text-uppercase bg-primary py-2 px-4 rounded-pill mb-3" style="color:white !important">Nuestras Fincas</h6>
-                    <h2 class="display-4 font-weight-bold mb-4">De Colombia para el <span class="text-primary">Mundo</span></h2>
-                    <p style="padding-bottom: 10px;" class="lead text-muted mb-0">Descubre nuestras instalaciones de cultivo de clase mundial, donde cada follaje es cuidadosamente seleccionado y preparado para la exportación internacional.</p>
-                         
-            <div class="row">
-                <div class="col-lg-6 mb-4">
-                    <div class="farm-gallery-card bg-white rounded-lg shadow-lg overflow-hidden h-100">
-                        <div class="row no-gutters">
-                            <div class="col-md-6">
-                                <img src="img/DSC00551.JPG" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 250px;" alt="Finca de cultivo de follajes de Prime Green en Cachipay" width="1600" height="899" loading="lazy" decoding="async">
-                            </div>
-                            <div class="col-md-6">
-                                <div class="p-4 h-100 d-flex flex-column justify-content-center">
-                                    <div class="mb-3">
-                                        <i class="fas fa-home fa-2x text-primary mb-2"></i>
-                                        <h5 class="font-weight-bold">Finca Principal</h5>
-                                    </div>
-                                    <p class="text-muted small mb-3">Centro de operaciones y administración con tecnología de punta para el monitoreo y control de todos nuestros cultivos.</p>
-                                    <ul class="list-unstyled small">
-                                        <li><i class="fas fa-check text-success mr-2"></i>Laboratorio de Control</li>
-                                        <li><i class="fas fa-check text-success mr-2"></i>Centro de Distribución</li>
-                                        <li><i class="fas fa-check text-success mr-2"></i>Oficinas Administrativas</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    </section>
 
-                <div class="col-lg-6 mb-4">
-                    <div class="farm-gallery-card bg-white rounded-lg shadow-lg overflow-hidden h-100">
-                        <div class="row no-gutters">
-                            <div class="col-md-6">
-                                <img src="img/DSC00565.JPG" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 250px;" alt="Cultivos tropicales de follajes para exportación" width="1600" height="899" loading="lazy" decoding="async">
-                            </div>
-                            <div class="col-md-6">
-                                <div class="p-4 h-100 d-flex flex-column justify-content-center">
-                                    <div class="mb-3">
-                                        <i class="fas fa-leaf fa-2x text-success mb-2"></i>
-                                        <h5 class="font-weight-bold">Cultivos Tropicales</h5>
-                                    </div>
-                                    <p class="text-muted small mb-3">Área especializada en follajes tropicales con sistemas de riego automatizado y control climático avanzado.</p>
-                                    <ul class="list-unstyled small">
-                                        <li><i class="fas fa-check text-success mr-2"></i>Riego Automatizado</li>
-                                        <li><i class="fas fa-check text-success mr-2"></i>Control de Humedad</li>
-                                        <li><i class="fas fa-check text-success mr-2"></i>Nutrición Especializada</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-6 mb-4">
-                    <div class="farm-gallery-card bg-white rounded-lg shadow-lg overflow-hidden h-100">
-                        <div class="row no-gutters">
-                            <div class="col-md-6">
-                                <img src="img/DSC00567.JPG" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 250px;" alt="Invernaderos de producción de follajes naturales" width="1600" height="899" loading="lazy" decoding="async">
-                            </div>
-                            <div class="col-md-6">
-                                <div class="p-4 h-100 d-flex flex-column justify-content-center">
-                                    <div class="mb-3">
-                                        <i class="fas fa-seedling fa-2x text-info mb-2"></i>
-                                        <h5 class="font-weight-bold">Invernaderos</h5>
-                                    </div>
-                                    <p class="text-muted small mb-3">Instalaciones climatizadas donde cultivamos variedades delicadas que requieren condiciones específicas de temperatura y luz.</p>
-                                    <ul class="list-unstyled small">
-                                        <li><i class="fas fa-check text-success mr-2"></i>Clima Controlado</li>
-                                        <li><i class="fas fa-check text-success mr-2"></i>Iluminación LED</li>
-                                        <li><i class="fas fa-check text-success mr-2"></i>Cultivo Hidropónico</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-6 mb-4">
-                    <div class="farm-gallery-card bg-white rounded-lg shadow-lg overflow-hidden h-100">
-                        <div class="row no-gutters">
-                            <div class="col-md-6">
-                                <img src="img/DSC00598.JPG" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 250px;" alt="Control de calidad de follajes antes del envío" width="1600" height="899" loading="lazy" decoding="async">
-                            </div>
-                            <div class="col-md-6">
-                                <div class="p-4 h-100 d-flex flex-column justify-content-center">
-                                    <div class="mb-3">
-                                        <i class="fas fa-microscope fa-2x text-warning mb-2"></i>
-                                        <h5 class="font-weight-bold">Control de Calidad</h5>
-                                    </div>
-                                    <p class="text-muted small mb-3">Laboratorio especializado donde cada producto pasa por rigurosos controles antes de ser empacado y enviado a nuestros clientes.</p>
-                                    <ul class="list-unstyled small">
-                                        <li><i class="fas fa-check text-success mr-2"></i>Análisis de Laboratorio</li>
-                                        <li><i class="fas fa-check text-success mr-2"></i>Certificación Fitosanitaria</li>
-                                        <li><i class="fas fa-check text-success mr-2"></i>Empaque Especializado</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-                </div>
+    <!-- ====================== Nuestros verdes en el mundo ================ -->
+    <section class="pg-section pg-section--tint" id="nuestros-verdes">
+        <div class="pg-container">
+            <div class="pg-section__head pg-section__head--center pg-reveal">
+                <p class="pg-eyebrow">Presencia global</p>
+                <h2 class="pg-section__title">Nuestros verdes en el <em>mundo</em></h2>
+                <p class="pg-lede mx-auto">
+                    Desde Cachipay hasta los mercados más exigentes. Explora el mapa y descubre
+                    qué variedades enviamos a cada región.
+                </p>
             </div>
 
-            
-
-        </div>
-    </div>
-    <!-- Nuestras Fincas End -->
-
-
-    <!-- Catálogo Premium Start -->
-    <div class="container-fluid py-5" id="catalogo" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-        <div class="container py-5">
-            <!-- Encabezado -->
-            <div class="row justify-content-center text-center mb-5">
-                <div class="col-lg-8">
-                    <h6 class="d-inline-block text-white text-uppercase bg-primary py-2 px-4 rounded-pill mb-3" style="color: white !important;">Nuestro Catálogo</h6>
-                    <h2 class="display-4 font-weight-bold mb-4">Follajes <span class="text-primary">Premium</span> para Cada Proyecto</h2>
-                    <p class="lead text-muted mb-0">Descubre nuestra selección exclusiva de productos cultivados con los más altos estándares de calidad para mercados internacionales.</p>
-                </div>
-            </div>
-
-            <!-- Galería Premium de Productos con Swiper -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="products-container-outer">
-                        <!-- Flechas de navegación externas -->
-                        <div class="external-nav external-nav-prev">
-                            <button class="external-nav-btn" id="prevBtn">
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                        </div>
-                        
-                        <!-- Contenedor principal del slider -->
-                        <div class="products-swiper-wrapper">
-                            <!-- Swiper -->
-                            <div class="swiper products-swiper">
-                                <div class="swiper-wrapper" id="products-gallery">
-                                    <!-- Los productos se cargarán dinámicamente -->
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Flecha derecha externa -->
-                        <div class="external-nav external-nav-next">
-                            <button class="external-nav-btn" id="nextBtn">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
-                        </div>
+            <!-- Mapamundi propio (imagen de puntos servida desde el dominio)
+                 en lugar de tiles de OpenStreetMap: el sitio es comercial y la
+                 politica de uso de sus servidores de voluntarios bloquea la app
+                 al pasar de cierto volumen (pagina 403 «Access blocked»). Sin
+                 terceros, sin bloqueos, y el contraste de los marcadores queda
+                 bajo control. Los marcadores se generan desde countries-data.js
+                 y siguen abriendo el panel lateral. -->
+            <div class="pg-map-frame pg-reveal">
+                <div class="row">
+                    <div class="col-lg-12" id="map-column">
+                        <figure class="pg-worldmap" id="world-map">
+                            <img class="pg-worldmap__img" src="img/world-map-sm.webp"
+                                 srcset="img/world-map-sm.webp 1014w, img/world-map.webp 2028w"
+                                 sizes="(min-width: 992px) 76vw, 92vw"
+                                 alt="Mapamundi con los países a los que Prime Green exporta follaje"
+                                 width="2028" height="800" loading="lazy" decoding="async">
+                            <div class="pg-worldmap__pins" id="world-map-pins"></div>
+                        </figure>
                     </div>
-                </div>
-            </div>
 
-            <!-- Indicadores de categorías (Ocultos) -->
-            <div class="row mt-5" style="display: none;">
-                <div class="col-12">
-                    <div class="category-filters text-center">
-                        <button class="btn btn-category active" data-category="all">
-                            <i class="fas fa-th mr-2"></i>Todos los Productos
-                        </button>
-                        <button class="btn btn-category" data-category="Follajes Ornamentales">
-                            <i class="fas fa-leaf mr-2"></i>Follajes Ornamentales
-                        </button>
-                        <button class="btn btn-category" data-category="Eucaliptos">
-                            <i class="fas fa-tree mr-2"></i>Eucaliptos
-                        </button>
-                        <button class="btn btn-category" data-category="Helechos Arbóreos">
-                            <i class="fas fa-spa mr-2"></i>Helechos Arbóreos
-                        </button>
-                        <button class="btn btn-category" data-category="Helechos Delicados">
-                            <i class="fas fa-seedling mr-2"></i>Helechos Delicados
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Llamada a la acción (Oculta) -->
-            <div class="row mt-5" style="display: none;">
-                <div class="col-12 text-center">
-                    <div class="bg-primary rounded-lg p-4 text-white">
-                        <h4 class="font-weight-bold mb-3">¿Necesitas un Producto Específico?</h4>
-                        <p class="mb-4">Contacta a nuestros especialistas para obtener información detallada sobre disponibilidad, precios y especificaciones técnicas.</p>
-                        <div class="row justify-content-center">
-                            <div class="col-md-4 mb-3">
-                                <a href="#contacto" class="btn btn-light btn-lg btn-block rounded-pill">
-                                    <i class="fas fa-phone mr-2"></i>Contactar Especialista
-                                </a>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <button class="btn btn-outline-light btn-lg btn-block rounded-pill" onclick="downloadFullCatalog()">
-                                    <i class="fas fa-download mr-2"></i>Catálogo Completo PDF
+                    <div class="col-lg-4" id="country-sidebar" style="display: none;">
+                        <div class="country-info-panel h-100 p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="mb-0 font-weight-bold text-primary" id="sidebar-title">Información del País</h3>
+                                <button type="button" class="btn btn-sm btn-light" id="close-sidebar" aria-label="Cerrar información del país">
+                                    <i class="fas fa-times" aria-hidden="true"></i>
                                 </button>
                             </div>
+
+                            <div id="sidebar-content">
+                                <!-- El contenido se llena dinámicamente -->
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Modal de especificaciones del producto -->
+    </section>
+
+    <!-- ============================ Catálogo ============================= -->
+    <section class="pg-section pg-catalog" id="catalogo">
+        <div class="pg-container">
+            <div class="pg-section__head pg-section__head--center pg-reveal">
+                <p class="pg-eyebrow">Catálogo</p>
+                <h2 class="pg-section__title">Follajes premium para <em>cada proyecto</em></h2>
+                <p class="pg-lede mx-auto">
+                    Una selección de nuestras variedades más solicitadas, cultivadas bajo los
+                    estándares que exigen los mercados internacionales.
+                </p>
+            </div>
+
+            <div class="products-container-outer">
+                <div class="external-nav external-nav-prev">
+                    <button class="external-nav-btn" id="prevBtn" aria-label="Ver productos anteriores">
+                        <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                    </button>
+                </div>
+
+                <div class="products-swiper-wrapper">
+                    <div class="swiper products-swiper">
+                        <div class="swiper-wrapper" id="products-gallery">
+                            <!-- Los productos se cargan dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="external-nav external-nav-next">
+                    <button class="external-nav-btn" id="nextBtn" aria-label="Ver más productos">
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
-                <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; overflow: hidden;">
-                    <!-- El contenido se cargará dinámicamente -->
+            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" role="document">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+                    <!-- El contenido se carga dinámicamente -->
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Catálogo Premium End -->
+    </section>
 
-
-    <!-- Nuestro Equipo Start -->
-    <div class="container-fluid py-5" id="nuestro-equipo">
-        <div class="container pt-5">
-            <div class="row justify-content-center text-center">
-                <div class="col-lg-8">
-                    <h6 class="d-inline-block bg-light text-primary text-uppercase py-2 px-3 rounded-pill">Nuestro Equipo</h6>
-                    <h2 class="mb-4 font-weight-bold">Expertos en <span class="text-primary">Follajes Naturales</span></h2>
-                    <p class="lead mb-5">Conoce al equipo de profesionales que hace posible la excelencia en cada proyecto de Prime Green</p>
-                </div>
+    <!-- ============================== Reels ============================== -->
+    <section class="pg-section pg-section--dark" id="reels">
+        <div class="pg-container">
+            <div class="pg-section__head pg-reveal">
+                <p class="pg-eyebrow pg-eyebrow--light">Video</p>
+                <h2 class="pg-section__title">Recorre la finca <em>en 10 segundos</em></h2>
+                <p class="pg-lede" style="color: rgba(255,255,255,.72)">
+                    Grabaciones aéreas de nuestros cultivos. Toca cualquier clip para reproducirlo.
+                </p>
             </div>
-            <div class="row justify-content-center">
-                <div class="col-lg-3 col-md-6">
-                    <div class="team position-relative overflow-hidden mb-5 rounded-lg shadow-sm">
-                        <img class="img-fluid" src="img/equipo-1.jpg" alt="Director de cultivos de Prime Green" width="600" height="800" loading="lazy" decoding="async" style="width: 100%; height: 250px; object-fit: cover;">
-                        <div class="position-relative text-center">
-                            <div class="team-text bg-primary text-white p-4">
-                                <h5 class="text-white text-uppercase font-weight-bold">Sebastián Rodríguez</h5>
-                                <p class="m-0">Commercial Manager</p>
-                            </div>
-                            <div class="team-social bg-dark text-center p-3">
-                                <a class="btn btn-outline-light btn-sm mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
-                                <a class="btn btn-outline-light btn-sm mr-2" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-light btn-sm" href="#"><i class="fas fa-envelope"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="team position-relative overflow-hidden mb-5 rounded-lg shadow-sm">
-                        <img class="img-fluid" src="img/equipo-2.jpg" alt="Especialista en distribución internacional de follajes" width="600" height="800" loading="lazy" decoding="async" style="width: 100%; height: 250px; object-fit: cover;">
-                        <div class="position-relative text-center">
-                            <div class="team-text bg-primary text-white p-4">
-                                <h5 class="text-white text-uppercase font-weight-bold">Felipe Torres</h5>
-                                <p class="m-0">Sales Representative</p>
-                            </div>
-                            <div class="team-social bg-dark text-center p-3">
-                                <a class="btn btn-outline-light btn-sm mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
-                                <a class="btn btn-outline-light btn-sm mr-2" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-light btn-sm" href="#"><i class="fas fa-envelope"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="team position-relative overflow-hidden mb-5 rounded-lg shadow-sm">
-                        <img class="img-fluid" src="img/equipo-3.jpg" alt="Ingeniera agrónoma del equipo de Prime Green" width="600" height="800" loading="lazy" decoding="async" style="width: 100%; height: 250px; object-fit: cover;">
-                        <div class="position-relative text-center">
-                            <div class="team-text bg-primary text-white p-4">
-                                <h5 class="text-white text-uppercase font-weight-bold">Sara Piedrahita</h5>
-                                <p class="m-0">Sales Representative</p>
-                            </div>
-                            <div class="team-social bg-dark text-center p-3">
-                                <a class="btn btn-outline-light btn-sm mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
-                                <a class="btn btn-outline-light btn-sm mr-2" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-light btn-sm" href="#"><i class="fas fa-envelope"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+            <div class="pg-reels__track pg-reveal">
+                <button type="button" class="pg-reel" data-reel="video/reels/reel-1.mp4" aria-label="Reproducir video de la finca 1">
+                    <img src="img/reels/reel-1.jpg" alt="Vista aérea de los cultivos" width="720" height="1280" loading="lazy" decoding="async">
+                    <video muted loop playsinline preload="none" aria-hidden="true"></video>
+                    <span class="pg-reel__play" aria-hidden="true"><span><i class="fas fa-play"></i></span></span>
+                    <span class="pg-reel__label">Cultivos a campo abierto</span>
+                </button>
+
+                <button type="button" class="pg-reel" data-reel="video/reels/reel-2.mp4" aria-label="Reproducir video de la finca 2">
+                    <img src="img/reels/reel-2.jpg" alt="Invernaderos desde el aire" width="720" height="1280" loading="lazy" decoding="async">
+                    <video muted loop playsinline preload="none" aria-hidden="true"></video>
+                    <span class="pg-reel__play" aria-hidden="true"><span><i class="fas fa-play"></i></span></span>
+                    <span class="pg-reel__label">Invernaderos</span>
+                </button>
+
+                <button type="button" class="pg-reel" data-reel="video/reels/reel-3.mp4" aria-label="Reproducir video de la finca 3">
+                    <img src="img/reels/reel-3.jpg" alt="Cosecha y empaque" width="720" height="1280" loading="lazy" decoding="async">
+                    <video muted loop playsinline preload="none" aria-hidden="true"></video>
+                    <span class="pg-reel__play" aria-hidden="true"><span><i class="fas fa-play"></i></span></span>
+                    <span class="pg-reel__label">Cosecha</span>
+                </button>
+
+                <button type="button" class="pg-reel" data-reel="video/reels/reel-4.mp4" aria-label="Reproducir video de la finca 4">
+                    <img src="img/reels/reel-4.jpg" alt="Entorno natural de la finca" width="720" height="1280" loading="lazy" decoding="async">
+                    <video muted loop playsinline preload="none" aria-hidden="true"></video>
+                    <span class="pg-reel__play" aria-hidden="true"><span><i class="fas fa-play"></i></span></span>
+                    <span class="pg-reel__label">Entorno</span>
+                </button>
             </div>
         </div>
-    </div>
-    <!-- Team End -->
+    </section>
 
+    <!-- ============================= Equipo ============================== -->
+    <section class="pg-section" id="nuestro-equipo">
+        <div class="pg-container">
+            <div class="pg-section__head pg-section__head--center pg-reveal">
+                <p class="pg-eyebrow">Nuestro equipo</p>
+                <h2 class="pg-section__title">Las personas detrás de cada <em>tallo</em></h2>
+            </div>
 
-    <!-- Footer Start -->
-    <div class="footer container-fluid position-relative bg-dark py-5" style="margin-top: 90px;">
-        <div class="container pt-5">
-            <div class="row">
-                <div class="col-lg-6 pr-lg-5 mb-5">
-                    <a href="index.html" class="navbar-brand">
-                        <h2 class="mb-3 text-white"><span class="text-primary">Prime Green</span> S.A.S</h2>
-                    </a>
-                    <p class="text-light">Líderes en cultivo y distribución de follajes naturales de calidad premium. Especializados en brindar soluciones integrales para proyectos decorativos, paisajísticos y comerciales en todo el mundo.</p>
-                    <p class="text-light"><i class="fa fa-map-marker-alt mr-2 text-primary"></i>Cachipay, Cundinamarca</p>
-                    <p class="text-light"><i class="fa fa-phone-alt mr-2 text-primary"></i>+57 311 4525703</p>
-                    <p class="text-light"><i class="fa fa-envelope mr-2 text-primary"></i>info@primegreen.com.co</p>
-                    <div class="d-flex justify-content-start mt-4">
-                        <a class="btn btn-lg btn-primary btn-lg-square mr-2" href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a class="btn btn-lg btn-primary btn-lg-square mr-2" href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a class="btn btn-lg btn-primary btn-lg-square mr-2" href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                        <a class="btn btn-lg btn-primary btn-lg-square" href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-                <div class="col-lg-6 pl-lg-5">
-                    <div class="row">
-                        <div class="col-sm-12 mb-5">
-                            <h5 class="text-white text-uppercase mb-4">Enlaces Rápidos</h5>
-                            <div class="d-flex flex-column justify-content-start">
-                                <a class="text-white-50 mb-2" href="#inicio"><i class="fa fa-angle-right mr-2"></i>Inicio</a>
-                                <a class="text-white-50 mb-2" href="#acerca"><i class="fa fa-angle-right mr-2"></i>Acerca de Nosotros</a>
-                                <a class="text-white-50 mb-2" href="#nuestros-verdes"><i class="fa fa-angle-right mr-2"></i>Nuestros Verdes</a>
-                                <a class="text-white-50 mb-2" href="#nuestras-fincas"><i class="fa fa-angle-right mr-2"></i>Nuestras Fincas</a>
-                                <a class="text-white-50" href="#nuestro-equipo"><i class="fa fa-angle-right mr-2"></i>Nuestro Equipo</a>
-                            </div>
+            <div class="pg-team">
+                <article class="pg-person pg-reveal">
+                    <figure class="pg-person__media">
+                        <img src="img/equipo-1.webp" alt="Sebastián Rodríguez, Commercial Manager" width="450" height="600" loading="lazy" decoding="async">
+                    </figure>
+                    <div class="pg-person__body">
+                        <h3 class="pg-person__name">Sebastián Rodríguez</h3>
+                        <p class="pg-person__role">Commercial Manager</p>
+                        <div class="pg-person__social">
+                            <a href="https://wa.me/573114525703?text=Hola%2C%20quiero%20hablar%20con%20Sebastián%20Rodríguez" target="_blank" rel="noopener"
+                       aria-label="Escribir por WhatsApp a Sebastián Rodríguez"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+                    <a href="tel:+573114525703" aria-label="Llamar a Sebastián Rodríguez"><i class="fas fa-phone-alt" aria-hidden="true"></i></a>
+                    <a href="mailto:info@primegreen.com.co?subject=Contacto%20con%20Sebastián%20Rodríguez" aria-label="Escribir a Sebastián Rodríguez"><i class="fas fa-envelope" aria-hidden="true"></i></a>
                         </div>
                     </div>
-                </div>
+                </article>
+
+                <article class="pg-person pg-reveal" data-delay="1">
+                    <figure class="pg-person__media">
+                        <img src="img/equipo-2.webp" alt="Felipe Torres, Sales Representative" width="338" height="600" loading="lazy" decoding="async">
+                    </figure>
+                    <div class="pg-person__body">
+                        <h3 class="pg-person__name">Felipe Torres</h3>
+                        <p class="pg-person__role">Sales Representative</p>
+                        <div class="pg-person__social">
+                            <a href="https://wa.me/573114525703?text=Hola%2C%20quiero%20hablar%20con%20Felipe%20Torres" target="_blank" rel="noopener"
+                       aria-label="Escribir por WhatsApp a Felipe Torres"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+                    <a href="tel:+573114525703" aria-label="Llamar a Felipe Torres"><i class="fas fa-phone-alt" aria-hidden="true"></i></a>
+                    <a href="mailto:info@primegreen.com.co?subject=Contacto%20con%20Felipe%20Torres" aria-label="Escribir a Felipe Torres"><i class="fas fa-envelope" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="pg-person pg-reveal" data-delay="2">
+                    <figure class="pg-person__media">
+                        <img src="img/equipo-3.webp" alt="Sara Piedrahita, Sales Representative" width="338" height="600" loading="lazy" decoding="async">
+                    </figure>
+                    <div class="pg-person__body">
+                        <h3 class="pg-person__name">Sara Piedrahita</h3>
+                        <p class="pg-person__role">Sales Representative</p>
+                        <div class="pg-person__social">
+                            <a href="https://wa.me/573114525703?text=Hola%2C%20quiero%20hablar%20con%20Sara%20Piedrahita" target="_blank" rel="noopener"
+                       aria-label="Escribir por WhatsApp a Sara Piedrahita"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+                    <a href="tel:+573114525703" aria-label="Llamar a Sara Piedrahita"><i class="fas fa-phone-alt" aria-hidden="true"></i></a>
+                    <a href="mailto:info@primegreen.com.co?subject=Contacto%20con%20Sara%20Piedrahita" aria-label="Escribir a Sara Piedrahita"><i class="fas fa-envelope" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                </article>
             </div>
         </div>
-    </div>
-    <div class="container-fluid bg-dark text-light border-top py-4" style="border-color: rgba(256, 256, 256, .15) !important;">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 text-center text-md-left mb-3 mb-md-0">
-                    <p class="m-0 text-white">&copy; 2025 <a href="#" class="text-primary">Prime Green S.A.S</a>. Todos los Derechos Reservados.</p>
-                </div>
-                <div class="col-md-6 text-center text-md-right">
-                    <p class="m-0 text-white">Follajes Naturales de Calidad Premium 🌿</p>
-                </div>
+    </section>
+
+    <!-- =============================== CTA =============================== -->
+    <section class="pg-cta" id="contacto">
+        <div class="pg-cta__bg" aria-hidden="true">
+            <img src="img/drone/p02-1600.webp" alt="" width="1600" height="1200" loading="lazy" decoding="async">
+        </div>
+        <div class="pg-container pg-cta__inner pg-reveal">
+            <p class="pg-eyebrow pg-eyebrow--light">Hablemos</p>
+            <h2 class="pg-cta__title">¿Listo para importar follaje colombiano?</h2>
+            <p class="pg-cta__text">
+                Cuéntanos qué variedades necesitas y te enviamos disponibilidad, precios
+                y especificaciones técnicas en menos de 24 horas.
+            </p>
+            <div class="pg-cta__actions">
+                <a class="pg-btn pg-btn--solid" href="https://wa.me/573114525703?text=Hola!%20Estoy%20interesado%20en%20sus%20follajes%20naturales" target="_blank" rel="noopener">
+                    <i class="fab fa-whatsapp" aria-hidden="true"></i> Escribir por WhatsApp
+                </a>
+                <a class="pg-btn pg-btn--ghost" href="mailto:info@primegreen.com.co">
+                    <i class="fas fa-envelope" aria-hidden="true"></i> info@primegreen.com.co
+                </a>
             </div>
         </div>
-    </div>
-    <!-- Footer End -->
+    </section>
+
+
+
+    <!-- ============================== Footer ============================== -->
+    <footer class="footer">
+        <div class="pg-container">
+            <div class="footer__grid">
+                <div>
+                    <a href="index.html" class="footer__brand">Prime <span>Green</span> S.A.S</a>
+                    <p style="color: rgba(255,255,255,.72); font-size: .9375rem; max-width: 34ch;">
+                        Cultivo y exportación de follajes naturales premium desde Cachipay,
+                        Cundinamarca, para floristería, decoración y paisajismo en todo el mundo.
+                    </p>
+                    <!-- Redes sociales: sustituir href="#" por la URL real de cada
+                         perfil cuando exista la cuenta. Mientras no existan se
+                         marcan como deshabilitadas y salen del orden de tabulación
+                         (antes eran 4 paradas de teclado que no llevaban a nada). -->
+                    <div class="footer__social">
+                        <a href="#" aria-label="Facebook (próximamente)" aria-disabled="true" tabindex="-1"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="Instagram (próximamente)" aria-disabled="true" tabindex="-1"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="LinkedIn (próximamente)" aria-disabled="true" tabindex="-1"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="YouTube (próximamente)" aria-disabled="true" tabindex="-1"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="footer__title">Explora</h3>
+                    <ul class="footer__list">
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#acerca">La finca</a></li>
+                        <li><a href="#galeria">Galería</a></li>
+                        <li><a href="#nuestras-fincas">Instalaciones</a></li>
+                        <li><a href="#nuestros-verdes">Presencia global</a></li>
+                        <li><a href="#catalogo">Catálogo</a></li>
+                        <li><a href="#reels">Videos</a></li>
+                        <li><a href="#nuestro-equipo">Equipo</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer__contact">
+                    <h3 class="footer__title">Contacto</h3>
+                    <p><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Cachipay, Cundinamarca — Colombia</p>
+                    <p><i class="fas fa-phone-alt" aria-hidden="true"></i> <a href="tel:+573114525703">+57 311 4525703</a></p>
+                    <p><i class="fas fa-envelope" aria-hidden="true"></i> <a href="mailto:info@primegreen.com.co">info@primegreen.com.co</a></p>
+                    <p><i class="fas fa-clock" aria-hidden="true"></i> Lunes a viernes, 8:00–17:00</p>
+                </div>
+            </div>
+
+            <div class="footer__legal">
+                <span>&copy; 2026 Prime Green S.A.S — Todos los derechos reservados.</span>
+                <span>Follajes naturales de calidad premium</span>
+            </div>
+        </div>
+    </footer>
+
 
 
     <!-- WhatsApp Button -->
@@ -759,18 +824,7 @@
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    
-    <!-- Leaflet JavaScript for OpenStreetMap -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
-            crossorigin=""></script>
-    
-    <!-- Swiper JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="lib/easing/easing.min.js"></script>
     <!-- counterup.min.js anima los contadores vía $.fn.waypoint, así que waypoints es obligatorio -->
@@ -780,80 +834,72 @@
     <!-- Map functionality is now handled with custom JavaScript -->
 
     <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+    <script src="js/main.js?v=20261005b"></script>
     
     <!-- Countries Data -->
-    <script src="js/countries-data.js"></script>
+    <script src="js/countries-data.js?v=20261005b"></script>
     
     <!-- Products Data -->
-    <script src="js/products-data.js"></script>
+    <script src="js/products-data.js?v=20261005b"></script>
     
     <!-- Prime Green Custom JavaScript -->
     <script>
+        // --- Carga diferida de dependencias pesadas -------------------------
+        // ponytail: Swiper (151 KB) sólo hace falta cuando el usuario llega al
+        // catálogo; se pide al acercarse con 1.5 pantallas de margen, así que al
+        // llegar ya está listo sin frenar la carga inicial. El mapa ya no carga
+        // nada: es una imagen propia (ver img/world-map.webp), así que se
+        // eliminan 144 KB de Leaflet y 8 peticiones de tiles por visita.
+        const PG_SWIPER = {
+            css: 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css',
+            js: 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js'
+        };
+
+        const pgCache = {};
+        function pgLoad(url) {
+            if (!pgCache[url]) {
+                pgCache[url] = new Promise(function (resolve, reject) {
+                    const isCss = /\.css($|\?)/.test(url);
+                    const el = document.createElement(isCss ? 'link' : 'script');
+                    if (isCss) {
+                        el.rel = 'stylesheet';
+                        el.href = url;
+                    } else {
+                        el.src = url;
+                        el.async = true;
+                    }
+                    el.onload = resolve;
+                    el.onerror = reject;
+                    document.head.appendChild(el);
+                });
+            }
+            return pgCache[url];
+        }
+
+        function pgLoadBoth(lib) {
+            return Promise.all([pgLoad(lib.css), pgLoad(lib.js)]);
+        }
+
+        // Ejecuta cb cuando el elemento se acerca al viewport (o si no hay observer).
+        function pgWhenNear(selector, cb, margin) {
+            const target = document.querySelector(selector);
+            if (!target) return;
+            if (!('IntersectionObserver' in window)) {
+                cb();
+                return;
+            }
+            const io = new IntersectionObserver(function (entries) {
+                if (entries.some(function (e) { return e.isIntersecting; })) {
+                    io.disconnect();
+                    cb();
+                }
+            }, { rootMargin: margin || '50% 0px' });
+            io.observe(target);
+        }
+
         // Variables globales
         let filteredProducts = [];
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const heroVideo = document.getElementById('hero-video');
-            const heroFallback = document.querySelector('.hero-video-fallback');
-
-            if (heroVideo) {
-                const hideFallback = () => {
-                    if (heroFallback) {
-                        heroFallback.classList.add('is-hidden');
-                    }
-                };
-
-                const showFallback = () => {
-                    heroVideo.classList.add('video-error');
-                    if (heroFallback) {
-                        heroFallback.classList.remove('is-hidden');
-                    }
-                };
-
-                heroVideo.setAttribute('muted', '');
-                heroVideo.muted = true;
-
-                // ponytail: el hero pesa 21 MB, así que sólo se descarga donde aporta:
-                // se omite en pantallas pequeñas, con ahorro de datos o con movimiento reducido.
-                const wantsVideo = window.matchMedia('(min-width: 769px)').matches
-                    && !(navigator.connection && navigator.connection.saveData)
-                    && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-                if (wantsVideo) {
-                    const heroSource = document.createElement('source');
-                    heroSource.src = 'video/Video Prime.m4v';
-                    heroSource.type = 'video/mp4';
-                    heroVideo.appendChild(heroSource);
-                    heroVideo.load();
-                }
-
-                heroVideo.addEventListener('loadeddata', hideFallback, { once: true });
-                heroVideo.addEventListener('canplay', hideFallback, { once: true });
-                heroVideo.addEventListener('error', (event) => {
-                    console.error('Error al cargar el video de portada:', heroVideo.error || event);
-                    showFallback();
-                });
-
-                const attemptPlay = (retries = 2) => {
-                    const playPromise = heroVideo.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(() => {
-                            if (retries > 0) {
-                                setTimeout(() => attemptPlay(retries - 1), 800);
-                            } else {
-                                heroVideo.setAttribute('controls', 'controls');
-                                showFallback();
-                            }
-                        });
-                    }
-                };
-
-                if (wantsVideo) {
-                    attemptPlay();
-                }
-            }
-        });
         
         // Función global para obtener producto por ID
         function getProductById(productId) {
@@ -1010,13 +1056,73 @@
             }
             return stars;
         }
-    
+
+        // --- Alto real de la cabecera fija ---------------------------------
+        // El encabezado fijo no mide siempre lo mismo: la barra verde superior
+        // sólo existe a partir de 992px y, al bajar, la barra de navegación se
+        // pega arriba y la tapa. Con --pg-offset fijo en 140px cada sección
+        // quedaba 25px corta sobre el pliegue y 69px corta una vez scrolleado,
+        // así que se veía el principio de la sección siguiente. Aquí se mide y
+        // se publica en --pg-topbar / --pg-nav (ver css/folio.css).
+        function pgHeaderSync() {
+            var root = document.documentElement;
+            var topbar = document.querySelector('.container-fluid.fixed-top');
+            var box = document.querySelector('.navbar-container');
+            if (!box) return;
+
+            // La barra verde superior sólo existe a partir de 992px.
+            var topH = topbar && getComputedStyle(topbar).display !== 'none'
+                ? topbar.getBoundingClientRect().height
+                : 0;
+            // El menú desplegado en móvil cuelga de la barra: no es cabecera.
+            var panel = box.querySelector('.navbar-collapse');
+            var openH = panel && panel.classList.contains('show')
+                ? panel.getBoundingClientRect().height
+                : 0;
+            var navH = Math.max(0, box.getBoundingClientRect().height - openH);
+
+            // Sólo se escribe si cambia: ResizeObserver vuelve a llamar aquí.
+            var topPx = Math.round(topH) + 'px';
+            var navPx = Math.round(navH) + 'px';
+            if (box.style.top !== topPx) box.style.top = topPx;
+            if (root.style.getPropertyValue('--pg-topbar') !== topPx) {
+                root.style.setProperty('--pg-topbar', topPx);
+            }
+            if (root.style.getPropertyValue('--pg-nav') !== navPx) {
+                root.style.setProperty('--pg-nav', navPx);
+            }
+        }
+
+        function pgHeaderHeight() {
+            var v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--pg-nav'));
+            return isNaN(v) ? 0 : v;
+        }
+
+        // Medir en cuanto hay layout, y de nuevo cuando algo cambie de tamaño:
+        // al cambiar de ancho, al cargar las fuentes o al desplegar el menú.
+        requestAnimationFrame(pgHeaderSync);
+        window.addEventListener('load', pgHeaderSync);
+        window.addEventListener('resize', pgHeaderSync);
+        window.addEventListener('orientationchange', pgHeaderSync);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(pgHeaderSync);
+        if (window.ResizeObserver) {
+            var pgHeaderRO = new ResizeObserver(pgHeaderSync);
+            var pgTopbarEl = document.querySelector('.container-fluid.fixed-top');
+            if (pgTopbarEl) pgHeaderRO.observe(pgTopbarEl);
+            var pgBoxEl = document.querySelector('.navbar-container');
+            if (pgBoxEl) pgHeaderRO.observe(pgBoxEl);
+        }
+
         $(document).ready(function() {
+            // el despliegue del menú móvil cambia el alto medido
+            $(document).on('shown.bs.collapse hidden.bs.collapse', pgHeaderSync);
+
             // Enhanced navbar scroll effect with proper z-index management
             $(window).scroll(function() {
                 var scrollTop = $(this).scrollTop();
-                var topbarHeight = $('.container-fluid.bg-light.fixed-top').outerHeight() || 44;
-                
+                // La barra superior queda tapada justo al scrollear su alto.
+                var topbarHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--pg-topbar')) || 0;
+
                 if (scrollTop > topbarHeight) {
                     $('.navbar-container').addClass('scrolled');
                     // Ensure navbar is always on top when scrolled
@@ -1031,7 +1137,15 @@
             
             // Enhanced smooth scrolling for anchor links
             $('a[href^="#"]').on('click', function(event) {
-                var target = $(this.getAttribute('href'));
+                // href="#" (enlaces todavía sin destino) rompía jQuery al
+                // interpretarlo como selector: "Syntax error, unrecognized
+                // expression: #". Se evita también el salto al principio.
+                var hash = this.getAttribute('href');
+                if (!hash || hash === '#') {
+                    event.preventDefault();
+                    return;
+                }
+                var target = $(hash);
                 if(target.length) {
                     event.preventDefault();
                     
@@ -1040,14 +1154,13 @@
                         $('.navbar-collapse').collapse('hide');
                     }
                     
-                    // Calculate offset based on screen size and scroll position
-                    var offset = $(window).width() > 991 ? 140 : 70;
-                    var scrollTop = $(window).scrollTop();
-                    var topbarHeight = $('.container-fluid.bg-light.fixed-top').outerHeight() || 44;
-                    
-                    // Adjust offset if topbar will be hidden
-                    if (target.offset().top > topbarHeight && $(window).width() > 991) {
-                        offset = 100; // Only navbar height when topbar is hidden
+                    // Al llegar a una sección la barra superior ya ha quedado
+                    // escondida tras la de navegación: sólo se descuenta --pg-nav.
+                    var offset = pgHeaderHeight();
+
+                    // #inicio es la primera sección: se sube hasta el principio de la página
+                    if (this.getAttribute('href') === '#inicio') {
+                        offset = target.offset().top;
                     }
                     
                     $('html, body').stop().animate({
@@ -1154,7 +1267,7 @@
                         countries: ['Estados Unidos', 'Canadá', 'México'],
                         mainProduct: 'Follajes Premium para Oficinas y Hoteles',
                         description: 'Especializada en plantas de interior duraderas para el clima norteamericano. Nuestros follajes son perfectos para oficinas corporativas, hoteles de lujo y centros comerciales.',
-                        image: 'img/DSC00551.JPG',
+                        image: 'img/DSC00551.webp',
                         demand: 'Alto',
                         specialties: ['Resistencia a climas fríos', 'Oficinas corporativas', 'Hoteles de lujo', 'Bajo mantenimiento']
                     },
@@ -1163,7 +1276,7 @@
                         countries: ['Brasil', 'Argentina', 'Chile', 'Colombia', 'Perú'],
                         mainProduct: 'Follajes Tropicales y Especies Nativas',
                         description: 'Amplia variedad de plantas tropicales y especies nativas ideales para resorts, spas y proyectos paisajísticos únicos en Sudamérica.',
-                        image: 'img/DSC00565.JPG',
+                        image: 'img/DSC00565.webp',
                         demand: 'Alto',
                         specialties: ['Especies nativas', 'Proyectos paisajísticos', 'Resorts tropicales', 'Eventos especiales']
                     },
@@ -1172,7 +1285,7 @@
                         countries: ['España', 'Francia', 'Alemania', 'Italia', 'Reino Unido', 'Países Bajos', 'Bélgica'],
                         mainProduct: 'Follajes Mediterráneos y Sostenibles',
                         description: 'Plantas resistentes adaptadas al clima mediterráneo y follajes con alta capacidad de purificación del aire para espacios eco-friendly.',
-                        image: 'img/DSC00567.JPG',
+                        image: 'img/DSC00567.webp',
                         demand: 'Medio',
                         specialties: ['Resistencia a sequía', 'Purificación del aire', 'Espacios sostenibles', 'Jardines mediterráneos']
                     },
@@ -1181,7 +1294,7 @@
                         countries: ['Japón', 'China', 'Corea del Sur', 'Australia', 'Nueva Zelanda', 'Tailandia', 'Singapur'],
                         mainProduct: 'Follajes Zen y Resistentes al Calor',
                         description: 'Plantas especializadas para espacios minimalistas estilo zen y follajes resistentes a climas áridos y calurosos del Pacífico.',
-                        image: 'img/DSC00598.JPG',
+                        image: 'img/DSC00598.webp',
                         demand: 'Alto',
                         specialties: ['Estética zen', 'Resistencia al calor', 'Proyectos urbanos', 'Espacios minimalistas']
                     }
@@ -1306,75 +1419,124 @@
                 });
             }
 
-            // Inicializar mapa OSM simplificado con JSON
-            let map;
+            // Marcadores sobre el mapamundi propio (ver img/world-map.webp).
+            // Mismas latitudes/longitudes que usaba Leaflet, colocadas en
+            // porcentaje sobre la proyeccion equirrectangular de la imagen.
             let selectedMarker = null;
-            
+
+            // La imagen se genero recortada en latitud (ver tools/build-world-map.py):
+            // de -58 a 84. Hay que usar el mismo recorte para que cada pais caiga
+            // donde le toca.
+            const MAP_LAT_NORTE = 84;
+            const MAP_LAT_SUR = -58;
+
+            // El color codifica el nivel de demanda (los tres pasos mantienen
+            // ≥3:1 sobre el fondo claro del mapamundi); antes era una rampa
+            // decorativa en la que 7 de 12 marcadores no se veían.
+            const DEMAND_COLOR = {
+                'Alta': '#1B5E20',
+                'Media': '#2E7D32',
+                'Emergente': '#388E3C'
+            };
+
+            // TEMPORAL: el mapa queda bloqueado mientras se hacen correcciones.
+            // Poner en true para devolverle la interactividad a los marcadores.
+            // Mientras esté en false los puntos siguen a la vista y con su
+            // tooltip —se puede leer a qué país corresponde cada uno—, pero no
+            // se pueden pulsar ni reciben el foco del teclado.
+            const MAPA_INTERACTIVO = false;
+
             function initWorldMap() {
-                // Crear el mapa centrado en el mundo
-                map = L.map('world-map', {
-                    preferCanvas: true,
-                    zoomControl: true
-                }).setView([20, 0], 2);
-                
-                // Añadir tiles de OpenStreetMap
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors',
-                    maxZoom: 6,
-                    minZoom: 2
-                }).addTo(map);
-                
-                // Añadir control de escala
-                L.control.scale({
-                    position: 'bottomleft'
-                }).addTo(map);
-                
-                // Crear marcadores desde el JSON
-                Object.keys(countriesData).forEach(countryCode => {
+                const pins = document.getElementById('world-map-pins');
+                if (!pins || typeof countriesData === 'undefined') return;
+
+                pins.innerHTML = '';
+
+                Object.keys(countriesData).forEach(function (countryCode) {
                     const country = countriesData[countryCode];
-                    const [lat, lng] = country.coordinates;
-                    
-                    // Crear icono personalizado basado en la región
-                    const customIcon = L.divIcon({
-                        html: `<div class="country-marker" data-country="${countryCode}" style="background-color: ${country.color}">
-                                 <i class="${country.icon}"></i>
-                               </div>`,
-                        className: 'custom-country-marker',
-                        iconSize: [30, 30],
-                        iconAnchor: [15, 15]
-                    });
-                    
-                    // Crear marcador
-                    const marker = L.marker([lat, lng], { 
-                        icon: customIcon,
-                        riseOnHover: false
-                    }).addTo(map);
-                    
-                    // Solo sidebar al hacer clic (sin tooltips)
-                    marker.on('click', function() {
-                        // Resetear el marcador anterior
-                        if (selectedMarker) {
-                            selectedMarker.getElement().classList.remove('selected');
-                        }
-                        
-                        // Marcar el actual como seleccionado
-                        selectedMarker = this;
-                        this.getElement().classList.add('selected');
-                        
-                        // Mostrar sidebar
+                    const lat = country.coordinates[0];
+                    const lng = country.coordinates[1];
+
+                    // Fuera del recorte de latitud no habria dónde ponerlo: se
+                    // deja fuera en vez de amontonarlo en el borde.
+                    if (lat > MAP_LAT_NORTE || lat < MAP_LAT_SUR) return;
+
+                    const pin = document.createElement('button');
+                    pin.type = 'button';
+                    pin.className = 'pg-pin';
+                    pin.dataset.country = countryCode;
+                    // Posición geográfica, en % sobre la imagen. El abanico de
+                    // abajo sólo mueve `top`; aquí queda el original para que el
+                    // cálculo sea repetible (resize, abrir/cerrar el panel).
+                    pin.dataset.x = ((lng + 180) / 360 * 100).toFixed(3);
+                    pin.dataset.y = ((MAP_LAT_NORTE - lat) / (MAP_LAT_NORTE - MAP_LAT_SUR) * 100).toFixed(3);
+                    pin.style.left = pin.dataset.x + '%';
+                    pin.style.top = pin.dataset.y + '%';
+                    pin.style.setProperty('--pin', DEMAND_COLOR[country.mainProduct.demandLevel] || '#2E7D32');
+                    pin.title = country.name;
+                    pin.setAttribute('aria-label', 'Ver información de ' + country.name);
+                    pin.innerHTML = '<i class="' + country.icon + '" aria-hidden="true"></i>';
+                    // Un <button> deshabilitado no recibe clics ni foco y los
+                    // lectores de pantalla lo anuncian como deshabilitado, así
+                    // que no hace falta nada más para bloquear el mapa.
+                    pin.disabled = !MAPA_INTERACTIVO;
+
+                    pin.addEventListener('click', function () {
+                        // Un botón deshabilitado ya no recibe clics, pero el
+                        // listener sigue ahí: este guardia cierra el paso a
+                        // cualquier clic que llegue por otra vía.
+                        if (!MAPA_INTERACTIVO) return;
+                        if (selectedMarker) selectedMarker.classList.remove('is-selected');
+                        selectedMarker = pin;
+                        pin.classList.add('is-selected');
                         showCountryModal(country);
                     });
-                    
-                    // Efecto hover mínimo (solo cambio de cursor)
-                    marker.on('mouseover', function() {
-                        this.getElement().style.cursor = 'pointer';
-                    });
+
+                    pins.appendChild(pin);
                 });
-                
-                // Restricciones del mapa
-                map.setMaxBounds([[-60, -180], [85, 180]]);
-                map.on('drag', function() {
-                    map.panInsideBounds([[-60, -180], [85, 180]], { animate: false });
+
+                pgSpreadPins();
+
+                // El ancho del mapa cambia al abrir el panel del país o al girar
+                // el móvil, así que el abanico se recalcula cuando la caja
+                // cambia de tamaño (no sólo al redimensionar la ventana).
+                if (window.ResizeObserver) {
+                    new ResizeObserver(pgSpreadPins).observe(pins);
+                }
+            }
+
+            // En un mapamundi completo varios países europeos caen casi en el
+            // mismo punto (España, Francia, Alemania): sin esto los marcadores
+            // se montan y sólo se puede pulsar el de arriba. Se abren en
+            // abanico vertical lo justo para que cada uno siga siendo pulsable.
+            // ponytail: abanico simple hacia abajo; si algún día coincidieran
+            // más de tres países en el mismo punto, tocaría agrupar de verdad.
+            function pgSpreadPins() {
+                const lista = [].slice.call(document.querySelectorAll('.pg-pin'));
+                const caja = lista.length ? lista[0].parentNode : null;
+                if (!caja || !caja.clientWidth || !caja.clientHeight) return;
+
+                const alto = parseFloat(getComputedStyle(lista[0]).height) || 24;
+                const ancho = parseFloat(getComputedStyle(lista[0]).width) || 24;
+                const altoPct = 100 * alto / caja.clientHeight;
+                const anchoPct = 100 * ancho / caja.clientWidth;
+
+                // Se colocan de norte a sur para que el desplazamiento sea estable
+                const orden = lista.slice().sort(function (a, b) {
+                    return parseFloat(a.dataset.y) - parseFloat(b.dataset.y);
+                });
+
+                const puestos = [];
+                orden.forEach(function (pin) {
+                    const x = parseFloat(pin.dataset.x);
+                    let y = parseFloat(pin.dataset.y);
+                    puestos.forEach(function (p) {
+                        const cercaX = Math.abs(p.x - x) < anchoPct;
+                        const cercaY = Math.abs(p.y - y) < altoPct;
+                        if (cercaX && cercaY) y = p.y + altoPct;
+                    });
+                    pin.style.top = y.toFixed(2) + '%';
+                    puestos.push({ x: x, y: y });
                 });
             }
             
@@ -1400,7 +1562,7 @@
                     
                     <!-- Producto Principal -->
                     <div class="main-product-section mb-4">
-                        <div class="product-image-container mb-3" style="height: 180px; background: linear-gradient(45deg, #f8f9fa, #e9ecef); border-radius: 10px; overflow: hidden;">
+                        <div class="product-image-container mb-3" style="height: 180px; background: var(--pg-surface-2); border-radius: var(--pg-r-lg); overflow: hidden;">
                             <img src="${country.mainProduct.image}" 
                                  class="img-fluid w-100 h-100" 
                                  loading="lazy" decoding="async"
@@ -1422,7 +1584,7 @@
                             </div>
                             <div class="col-6">
                                 <div class="stat-box text-center p-2 bg-white rounded">
-                                    <i class="fas fa-trending-up text-primary mb-1"></i>
+                                    <i class="fas fa-arrow-trend-up text-primary mb-1" aria-hidden="true"></i>
                                     <div class="small text-muted">Crecimiento</div>
                                     <div class="font-weight-bold small text-primary">${country.marketInfo.growthRate}</div>
                                 </div>
@@ -1469,14 +1631,16 @@
                     <div class="action-buttons">
                         <div class="row">
                             <div class="col-12 mb-2">
-                                <button type="button" class="btn btn-primary btn-sm btn-block" onclick="requestCatalog('${country.name}')">
-                                    <i class="fas fa-download mr-2"></i>Descargar Catálogo
-                                </button>
+                                <a class="btn btn-primary btn-sm btn-block" target="_blank" rel="noopener"
+                                   href="https://wa.me/573114525703?text=${encodeURIComponent(`Hola, quiero recibir el catálogo de follajes para ${country.name}.`)}">
+                                    <i class="fas fa-download mr-2" aria-hidden="true"></i>Descargar Catálogo
+                                </a>
                             </div>
                             <div class="col-12">
-                                <button type="button" class="btn btn-success btn-sm btn-block" onclick="contactSales('${country.name}')">
-                                    <i class="fas fa-phone mr-2"></i>Contactar Ventas
-                                </button>
+                                <a class="btn btn-success btn-sm btn-block" target="_blank" rel="noopener"
+                                   href="https://wa.me/573114525703?text=${encodeURIComponent(`Hola, quiero hablar con ventas sobre los envíos a ${country.name}.`)}">
+                                    <i class="fas fa-phone mr-2" aria-hidden="true"></i>Contactar Ventas
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -1484,13 +1648,6 @@
                 
                 // Insertar contenido
                 $('#sidebar-content').html(sidebarContent);
-                
-                // Forzar resize del mapa después de un pequeño delay
-                setTimeout(() => {
-                    if (map) {
-                        map.invalidateSize();
-                    }
-                }, 350);
             }
             
             // Función para cerrar el sidebar
@@ -1500,20 +1657,19 @@
                 
                 // Resetear marcador seleccionado
                 if (selectedMarker) {
-                    selectedMarker.getElement().classList.remove('selected');
+                    selectedMarker.classList.remove('is-selected');
                     selectedMarker = null;
                 }
-                
-                // Forzar resize del mapa
-                setTimeout(() => {
-                    if (map) {
-                        map.invalidateSize();
-                    }
-                }, 350);
             }
             
             // Event listener para cerrar sidebar
             $(document).on('click', '#close-sidebar', function() {
+                closeSidebar();
+            });
+
+            // Al pedir catálogo o hablar con ventas el panel ya cumplió su
+            // función: se cierra para dejar ver el mapa.
+            $(document).on('click', '#country-sidebar .action-buttons a', function() {
                 closeSidebar();
             });
 
@@ -1561,7 +1717,7 @@
                         scientificName: "Ruscus aculeatus",
                         description: "Follaje de larga duración ideal para arreglos florales de lujo y decoración premium",
                         detailedDescription: "El Ruscus Premium es nuestro producto estrella, cultivado especialmente para mercados internacionales exigentes. Su excepcional durabilidad y resistencia lo convierten en la elección perfecta para proyectos de alta gama.",
-                        image: "img/DSC00551.JPG",
+                        image: "img/DSC00551.webp",
                         characteristics: {
                             durability: "15-20 días",
                             height: "40-60 cm",
@@ -1588,7 +1744,7 @@
                         scientificName: "Eucalyptus pulverulenta",
                         description: "Eucalipto de color azul grisáceo con aroma distintivo, perfecto para decoración moderna",
                         detailedDescription: "Este eucalipto único destaca por su color azul grisáceo y aroma característico. Ideal para tendencias modernas en decoración y muy apreciado en mercados internacionales.",
-                        image: "img/DSC00565.JPG",
+                        image: "img/DSC00565.webp",
                         characteristics: {
                             durability: "10-15 días",
                             height: "30-50 cm",
@@ -1615,7 +1771,7 @@
                         scientificName: "Cyathea cooperi",
                         description: "Helecho arbóreo de alta calidad con textura única para proyectos de decoración exclusivos",
                         detailedDescription: "Helecho arbóreo de gran impacto visual, perfecto para proyectos paisajísticos y decoración tropical de alta gama. Su textura única y tamaño imponente lo convierten en una pieza central.",
-                        image: "img/DSC00567.JPG",
+                        image: "img/DSC00567.webp",
                         characteristics: {
                             durability: "12-18 días",
                             height: "50-80 cm",
@@ -1642,7 +1798,7 @@
                         scientificName: "Nephrolepis exaltata",
                         description: "Helecho clásico con frondas elegantes, ideal para interiores y arreglos naturales",
                         detailedDescription: "Helecho clásico muy apreciado por su elegancia natural y facilidad de manejo. Perfecto para interiores y arreglos que requieren un toque natural sofisticado.",
-                        image: "img/DSC00592.jpg",
+                        image: "img/DSC00592.webp",
                         characteristics: {
                             durability: "8-12 días",
                             height: "25-40 cm",
@@ -1669,7 +1825,7 @@
                         scientificName: "Ruscus hypoglossum",
                         description: "Variedad italiana de ruscus con hojas más grandes y resistencia superior",
                         detailedDescription: "Variedad especial de ruscus con características superiores. Sus hojas más grandes y resistencia excepcional lo hacen ideal para proyectos de larga duración y alta exigencia.",
-                        image: "img/DSC00598.JPG",
+                        image: "img/DSC00598.webp",
                         characteristics: {
                             durability: "20-25 días",
                             height: "45-65 cm",
@@ -1696,7 +1852,7 @@
                         scientificName: "Eucalyptus cinerea",
                         description: "Eucalipto con hojas plateadas, muy demandado en mercados internacionales",
                         detailedDescription: "Eucalipto de hojas plateadas con gran demanda internacional. Su color único y aroma suave lo convierten en una elección popular para decoración contemporánea.",
-                        image: "img/DSC00633.JPG",
+                        image: "img/DSC00633.webp",
                         characteristics: {
                             durability: "12-16 días",
                             height: "35-55 cm",
@@ -1737,14 +1893,23 @@
                     const availableSizes = product.characteristics?.availableSizes 
                         ? product.characteristics.availableSizes.join(', ')
                         : product.characteristics?.height || 'Varios tamaños';
-                    
+
+                    // La ficha está desactivada: la tarjeta deja de comportarse como
+                    // botón. `is-static` le quita el cursor de enlace y, al no llevar
+                    // role ni tabindex, ni el teclado ni los lectores de pantalla
+                    // llegan a un control que no hace nada al pulsarlo.
+                    const cardClase = FICHA_PRODUCTO_ACTIVA ? '' : ' is-static';
+                    const cardRol = FICHA_PRODUCTO_ACTIVA
+                        ? ` role="button" tabindex="0" aria-label="Ver ficha de ${product.name}"`
+                        : '';
+
                     const productSlide = `
                         <div class="swiper-slide">
-                            <div class="product-card" data-product-id="${product.id}">
+                            <div class="product-card${cardClase}" data-product-id="${product.id}"${cardRol}>
                                 <div class="product-image-container">
                                     <img src="${product.image}" alt="${product.name}" class="product-image" 
-                                         loading="lazy" decoding="async"
-                                         onerror="this.src='img/carousel-1.jpg';">
+                                         loading="lazy" decoding="async" width="675" height="1200"
+                                         onerror="this.src='img/carousel-1.webp';">
                                     <div class="product-overlay" style="display: none;">
                                         <div class="product-badge">
                                             <span class="badge badge-luxury">${product.category}</span>
@@ -1761,7 +1926,7 @@
                                     </div>
                                 </div>
                                 <div class="product-info">
-                                    <h5 class="product-name">${product.name}</h5>
+                                    <h3 class="product-name">${product.name}</h3>
                                     <p class="product-scientific">${product.scientificName}</p>
                                     <div class="product-specs">
                                         <div class="spec-item">
@@ -1780,6 +1945,19 @@
                 setTimeout(() => {
                     initProductsSwiper();
                 }, 100);
+
+                // Abrir la ficha del producto al pulsar la tarjeta
+                $('#products-gallery').off('click', '.product-card').on('click', '.product-card', function () {
+                    showProductModal($(this).attr('data-product-id'));
+                });
+
+                // La tarjeta es un div con role=button: el teclado también abre la ficha
+                $('#products-gallery').off('keydown', '.product-card').on('keydown', '.product-card', function (event) {
+                    if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+                        event.preventDefault();
+                        showProductModal($(this).attr('data-product-id'));
+                    }
+                });
             }
 
             // Inicializar Swiper para productos
@@ -1807,7 +1985,12 @@
                     effect: 'slide',
                     speed: 800,
                     
-                    // Responsive breakpoints
+                    // Responsive breakpoints. La tarjeta lleva la foto arriba
+                    // y los datos debajo, así que aguanta bien anchos
+                    // pequeños: con 4 por vista mide 235 px a 1280-1600 (la
+                    // foto ocupa 191 del alto que marca --alto-foto, o sea el
+                    // 81 %) y 273-289 px a partir de 1920. Por debajo de 1280
+                    // la tarjeta se queda estrecha, así que se muestran 3.
                     breakpoints: {
                         320: {
                             slidesPerView: 1,
@@ -1822,10 +2005,14 @@
                             spaceBetween: 15,
                         },
                         992: {
-                            slidesPerView: 3,
+                            slidesPerView: 2.5,
                             spaceBetween: 15,
                         },
                         1200: {
+                            slidesPerView: 3,
+                            spaceBetween: 15,
+                        },
+                        1280: {
                             slidesPerView: 4,
                             spaceBetween: 15,
                         }
@@ -1874,8 +2061,18 @@
                 }
             }
 
+            // TEMPORAL: la ficha de producto está desactivada mientras se hacen
+            // correcciones. Poner en true para devolverla a las tarjetas.
+            // Mientras esté en false la tarjeta no se anuncia como botón —no
+            // recibe el foco del teclado ni se anuncia a lectores de pantalla—
+            // y al pulsarla no abre nada.
+            const FICHA_PRODUCTO_ACTIVA = false;
+
             // Funciones de compatibilidad
             function showProductModal(productId) {
+                // Punto único de guarda: cubre el clic, el teclado y cualquier
+                // otra vía que llame a esta función.
+                if (!FICHA_PRODUCTO_ACTIVA) return;
                 console.log('Abriendo modal para producto:', productId);
                 const product = getProductById(productId);
                 if (!product) {
@@ -1888,25 +2085,35 @@
                     ? product.characteristics.availableSizes.join(', ')
                     : product.characteristics?.height || 'Varios tamaños';
 
+                // Los nombres de las especificaciones vienen en inglés y en
+                // camelCase: se muestran con su etiqueta en español.
+                const ETIQUETAS = {
+                    stemLength: 'Largo del tallo',
+                    packaging: 'Empaque',
+                    weight: 'Peso',
+                    temperature: 'Temperatura',
+                    humidity: 'Humedad'
+                };
+
                 const modalContent = `
-                    <div class="modal-header bg-gradient-success text-white border-0" style="background: linear-gradient(135deg, #2E7D32 0%, #43A047 100%);">
+                    <div class="modal-header">
                         <div class="d-flex align-items-center">
                             <div class="product-icon-wrapper mr-3">
                                 <i class="fas fa-leaf fa-2x text-white"></i>
                             </div>
                             <div>
                                 <h4 class="modal-title font-weight-bold mb-1">${product.name}</h4>
-                                <p class="mb-0 opacity-75"><em>${product.scientificName}</em></p>
+                                <p class="mb-0"><em>${product.scientificName}</em></p>
                             </div>
                         </div>
-                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
-                            <span aria-hidden="true" style="font-size: 1.5rem;">&times;</span>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     
                     <div class="modal-body p-0">
                         <div class="product-hero-image">
-                            <img src="${product.image}" class="img-fluid w-100" loading="lazy" decoding="async" style="height: 280px; object-fit: cover;" alt="${product.name}">
+                            <img src="${product.image}" class="img-fluid w-100" loading="lazy" decoding="async" width="675" height="1200" alt="${product.name}">
                             <div class="hero-overlay">
                                 <div class="popularity-badge">
                                     ${generateStars(product.popularity)}
@@ -1965,7 +2172,7 @@
                                     <div class="specifications-cards">
                                         ${Object.entries(product.specifications).map(([key, value]) => 
                                             `<div class="spec-card mb-2">
-                                                <strong class="text-dark">${key.charAt(0).toUpperCase() + key.slice(1)}:</strong>
+                                                <strong class="text-dark">${ETIQUETAS[key] || key.charAt(0).toUpperCase() + key.slice(1)}:</strong>
                                                 <span class="text-muted ml-2">${value}</span>
                                             </div>`
                                         ).join('')}
@@ -1979,14 +2186,16 @@
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-md-6 mb-2 mb-md-0">
-                                    <button type="button" class="btn btn-outline-success btn-block btn-modal-action">
-                                        <i class="fas fa-info-circle mr-2"></i>Más Información
-                                    </button>
+                                    <a class="btn btn-outline-success btn-block" target="_blank" rel="noopener" data-dismiss="modal"
+                                       href="https://wa.me/573114525703?text=${encodeURIComponent(`Hola, quiero más información sobre ${product.name}.`)}">
+                                        <i class="fas fa-info-circle mr-2" aria-hidden="true"></i>Más Información
+                                    </a>
                                 </div>
                                 <div class="col-md-6">
-                                    <button type="button" class="btn btn-success btn-block btn-modal-action">
-                                        <i class="fas fa-calculator mr-2"></i>Solicitar Cotización
-                                    </button>
+                                    <a class="btn btn-success btn-block" target="_blank" rel="noopener" data-dismiss="modal"
+                                       href="https://wa.me/573114525703?text=${encodeURIComponent(`Hola, quiero una cotización de ${product.name}.`)}">
+                                        <i class="fas fa-calculator mr-2" aria-hidden="true"></i>Solicitar Cotización
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -2033,15 +2242,6 @@
             }
             
             // Funciones auxiliares para acciones del modal
-            function requestCatalog(countryName) {
-                alert(`Solicitando catálogo especializado para ${countryName}. En breve recibirás el catálogo por email.`);
-                $('#countryModal').modal('hide');
-            }
-            
-            function contactSales(countryName) {
-                alert(`Conectando con el equipo de ventas para ${countryName}. Te contactaremos en las próximas 24 horas.`);
-                $('#countryModal').modal('hide');
-            }
             
             // Función para calcular el ancho de una card individual
             function getCardWidth() {
@@ -2195,1334 +2395,342 @@
 
             // Inicializar el mapa cuando el documento esté listo
             $(document).ready(function() {
-                // Comprobar si el elemento del mapa existe
-                if ($('#world-map').length) {
-                    // Delay para asegurar que Leaflet esté completamente cargado
-                    setTimeout(initWorldMap, 500);
-                }
-                
-                // Inicializar la galería de productos
+                // El mapamundi ya no descarga nada (es una imagen propia), así
+                // que los marcadores se colocan de una vez: no hay motivo para
+                // esperar al scroll, y así no se queda vacío si el navegador
+                // carga la página en segundo plano y el observer no entrega.
+                initWorldMap();
+
+                // La galería de productos entra en escena al acercarse al catálogo
                 if ($('#products-gallery').length) {
-                    setTimeout(initProductsGallery, 300);
+                    pgWhenNear('#catalogo', function () {
+                        pgLoadBoth(PG_SWIPER).then(function () {
+                            initProductsGallery();
+                        }).catch(function (err) {
+                            console.error('No se pudo cargar Swiper:', err);
+                        });
+                    });
                 }
             });
         });
     </script>
     
-    <!-- CSS personalizado para los iconos del mapa -->
-    <style>
-        .custom-div-icon {
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid #2E7D32;
-            border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .leaflet-popup-content-wrapper {
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        
-        .popup-content {
-            min-width: 200px;
-            text-align: left;
-        }
-        
-        .leaflet-popup-tip {
-            background: white;
-        }
-        
-        #world-map {
-            border: 2px solid #e0e0e0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        /* Estilos simplificados para marcadores de países */
-        .custom-country-marker {
-            background: transparent !important;
-            border: none !important;
-        }
-        
-        .country-marker {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            border: 3px solid white;
-            animation: pulse 2s infinite;
-        }
-        
-        .country-marker.selected {
-            animation: none;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            border: 4px solid #ffc107;
-            transform: scale(1.1);
-        }
-        
-        .country-marker:hover {
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        }
-        
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 2px 10px rgba(0,0,0,0.3), 0 0 0 0 rgba(46, 125, 50, 0.7);
-            }
-            70% {
-                box-shadow: 0 2px 10px rgba(0,0,0,0.3), 0 0 0 10px rgba(46, 125, 50, 0);
-            }
-            100% {
-                box-shadow: 0 2px 10px rgba(0,0,0,0.3), 0 0 0 0 rgba(46, 125, 50, 0);
-            }
-        }
-        
-        /* Tooltips personalizados - REMOVIDOS */
-        
-        /* Estilos para modales de países */
-        .modal-lg .modal-content {
-            border-radius: 15px;
-            overflow: hidden;
-        }
-        
-        .modal-header.bg-gradient-primary {
-            border-bottom: none;
-        }
-        
-        .product-image-container {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .product-image-container img {
-            transition: transform 0.3s ease;
-        }
-        
-        .product-image-container:hover img {
-            transform: scale(1.05);
-        }
-        
-        .stat-item {
-            padding: 10px 0;
-        }
-        
-        .badge-outline-primary {
-            color: #2E7D32;
-            border: 1px solid #2E7D32;
-            background: white;
-        }
-        
-        .badge-outline-primary:hover {
-            background: #2E7D32;
-            color: white;
-        }
-        
-        /* Mejoras para el contenedor del mapa */
-        .world-map-container {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            backdrop-filter: blur(10px);
-        }
-        
-        /* Estilos para el sidebar de información del país */
-        .country-info-panel {
-            max-height: 500px;
-            overflow-y: auto;
-            border-left: 4px solid #2E7D32;
-        }
-        
-        .country-info-panel::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .country-info-panel::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 3px;
-        }
-        
-        .country-info-panel::-webkit-scrollbar-thumb {
-            background: #2E7D32;
-            border-radius: 3px;
-        }
-        
-        .country-info-panel::-webkit-scrollbar-thumb:hover {
-            background: #1B5E20;
-        }
-        
-        .product-image-container {
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-        
-        .product-image-container:hover {
-            transform: scale(1.02);
-        }
-        
-        .stat-box {
-            transition: all 0.3s ease;
-            border: 1px solid #e9ecef;
-        }
-        
-        .stat-box:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-        
-        .product-item {
-            transition: all 0.3s ease;
-            border: 1px solid #e9ecef;
-        }
-        
-        .product-item:hover {
-            background-color: #f8f9fa !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .badge-outline-primary {
-            color: #2E7D32;
-            border: 1px solid #2E7D32;
-            background: white;
-            transition: all 0.3s ease;
-        }
-        
-        .badge-outline-primary:hover {
-            background: #2E7D32;
-            color: white;
-        }
-        
-        /* Transiciones suaves para el cambio de layout */
-        #map-column {
-            transition: all 0.3s ease;
-        }
-        
-        #country-sidebar {
-            transition: all 0.3s ease;
-        }
-        
-        /* Responsive para el sidebar */
-        @media (max-width: 991.98px) {
-            #country-sidebar {
-                margin-top: 20px;
-            }
-            
-            .country-info-panel {
-                max-height: 400px;
-                border-left: none;
-                border-top: 4px solid #2E7D32;
-            }
-        }
+    <!-- Aparición al hacer scroll y reproducción de los clips -->
+    <script>
+        (function () {
+            'use strict';
 
-        /* ========== ESTILOS GALERÍA DE PRODUCTOS PREMIUM ========== */
-        .products-gallery-wrapper {
-            position: relative;
-            margin: 40px 0;
-        }
-        
-        .gallery-navigation {
-            display: flex;
-            justify-content: space-between;
-            position: absolute;
-            top: 50%;
-            left: -50px;
-            right: -50px;
-            transform: translateY(-50%);
-            z-index: 10;
-            pointer-events: none;
-        }
-        
-        .gallery-nav-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #2E7D32 0%, #388E3C 100%);
-            color: white;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
-            pointer-events: all;
-        }
-        
-        .gallery-nav-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 25px rgba(46, 125, 50, 0.5);
-            background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 100%);
-        }
-        
-        .gallery-nav-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: scale(1);
-        }
-
-        /* Estilos del slider viejo removidos - ahora se usa Swiper */
-        
-        /* CSS obsoleto del slider viejo eliminado */
-        
-        /* Filtros de categoría */
-
-        .product-card:hover .product-image {
-            transform: scale(1.1);
-        }
-
-        .product-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(46, 125, 50, 0.8) 0%, rgba(56, 142, 60, 0.6) 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px;
-        }
-
-        .product-card:hover .product-overlay {
-            opacity: 1;
-        }
-
-        .product-badge {
-            align-self: flex-start;
-        }
-
-        .product-quick-info {
-            align-self: flex-end;
-            text-align: right;
-        }
-
-        .popularity-stars i {
-            font-size: 14px;
-            margin-right: 2px;
-        }
-
-        .price-range {
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
-            margin-top: 5px;
-        }
-
-        .product-info {
-            padding: 20px;
-            height: 170px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .product-name {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #2E7D32;
-            margin-bottom: 5px;
-            line-height: 1.2;
-        }
-
-        .product-scientific-name {
-            color: #666;
-            font-size: 0.85rem;
-            margin-bottom: 10px;
-            line-height: 1.2;
-        }
-
-        .product-sizes {
-            margin-bottom: 15px;
-        }
-
-        .size-item {
-            background: #f8f9fa;
-            padding: 8px 12px;
-            border-radius: 10px;
-            border-left: 3px solid #2E7D32;
-        }
-
-        .product-details-btn {
-            border-radius: 12px;
-            font-weight: 600;
-            padding: 10px;
-            font-size: 0.9rem;
-        }
-
-        .product-description {
-            color: #777;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 20px;
-        }
-
-        .product-features {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: center;
-            background: #f8f9fa;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-        }
-
-        .feature-item i {
-            margin-right: 6px;
-            font-size: 12px;
-        }
-
-        /* Controles de navegación */
-        .gallery-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: linear-gradient(135deg, #2E7D32, #388E3C);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 20;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .gallery-nav:hover {
-            background: linear-gradient(135deg, #1B5E20, #2E7D32);
-            transform: translateY(-50%) scale(1.1);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-
-        .gallery-nav-left {
-            left: 10px;
-        }
-
-        .gallery-nav-right {
-            right: 10px;
-        }
-
-        /* Filtros de categoría */
-        .category-filters {
-            margin: 30px 0;
-        }
-
-        .btn-category {
-            background: white;
-            border: 2px solid #e9ecef;
-            color: #666;
-            margin: 5px 10px;
-            padding: 10px 20px;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .btn-category:hover,
-        .btn-category.active {
-            background: #2E7D32;
-            border-color: #2E7D32;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
-        }
-
-        /* Modal de producto */
-        .product-gallery-modal {
-            position: relative;
-        }
-
-        .characteristics-grid,
-        .specifications-grid {
-            display: grid;
-            gap: 8px;
-        }
-
-        .char-item,
-        .spec-item {
-            padding: 8px 12px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            font-size: 0.9rem;
-        }
-
-        .popularity-rating {
-            font-size: 1.2rem;
-        }
-
-        .badge-lg {
-            font-size: 1rem;
-            padding: 8px 16px;
-        }
-
-        /* Responsive */
-        @media (max-width: 1400px) {
-            .products-gallery-container {
-                padding: 20px 40px 40px 40px;
-            }
-            
-            .gallery-navigation {
-                left: -35px;
-                right: -35px;
-            }
-        }
-        
-        @media (max-width: 1200px) {
-            .product-card {
-                flex: 0 0 300px;
-                width: 300px;
-            }
-            
-            .products-gallery-container {
-                padding: 20px 30px 40px 30px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .products-gallery-container {
-                padding: 0 50px 20px 50px;
-            }
-            
-            .product-card {
-                flex: 0 0 280px;
-                width: 280px;
-                height: 400px;
-            }
-            
-            .gallery-nav-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 14px;
-            }
-            
-            .gallery-navigation {
-                left: -40px;
-                right: -40px;
-            }
-            
-            .btn-category {
-                font-size: 0.9rem;
-                padding: 8px 16px;
-                margin: 3px 5px;
+            // Aparición progresiva: sólo se activa si el navegador lo soporta
+            var reveals = document.querySelectorAll('.pg-reveal');
+            if ('IntersectionObserver' in window) {
+                var io = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-in');
+                            io.unobserve(entry.target);
+                        }
+                    });
+                }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+                reveals.forEach(function (el) { io.observe(el); });
+            } else {
+                reveals.forEach(function (el) { el.classList.add('is-in'); });
             }
 
-            .product-info {
-                padding: 15px;
-                height: 150px;
-            }
+            // ---- Fotos de la finca que rotan solas ------------------------
+            // Las 18 tomas de dron (assets2) pasan por cada grupo marcado con
+            // data-rotator. En «La finca» (#acerca) hay una sola foto, así que
+            // el relevo es un fundido cruzado; en el mosaico de la galería hay
+            // varias casillas y el cambio se lee como una ola. Se detiene si el
+            // usuario lo pide, si el grupo no se ve y si el sistema pide menos
+            // movimiento.
+            (function () {
+                var boxes = [].slice.call(document.querySelectorAll('[data-rotator]'));
+                if (!boxes.length) return;
 
-            .product-name {
-                font-size: 1.2rem;
-            }
+                var POOL = [];
+                for (var n = 1; n <= 18; n++) {
+                    var name = (n < 10 ? 'p0' : 'p') + n;
+                    POOL.push({ s: 'img/drone/' + name + '-800.webp', l: 'img/drone/' + name + '-1600.webp' });
+                }
 
-            .product-scientific-name {
-                font-size: 0.8rem;
-            }
-        }
+                var BEAT = 6000;   // ritmo del cambio
+                var STAGGER = 140; // desfase entre fotos: se lee como una ola
+                var SETTLE = 1800; // debe cubrir la transición de entrada del CSS
 
-        @media (max-width: 576px) {
-            .products-container-outer {
-                padding: 0 5px;
-                margin: 20px auto;
-            }
-            
-            .products-swiper-wrapper {
-                padding: 0;
-                border-radius: 10px;
-            }
-            
-            .products-swiper {
-                padding: 15px 0 30px 0;
-            }
-            
-            .product-card {
-                border-radius: 15px;
-            }
-            
-            .product-image-container {
-                height: 200px;
-            }
-            
-            .product-info {
-                padding: 15px;
-            }
-            
-            .product-name {
-                font-size: 1.1rem;
-            }
-        }
-        
-        /* Estilos para la galería de fincas */
-        .farm-image-card {
-            position: relative;
-            overflow: hidden;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-        
-        .farm-image-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-        }
-        
-        .farm-image-card .overlay-text {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
-            padding: 20px 15px 15px;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-        
-        .farm-image-card:hover .overlay-text {
-            transform: translateY(0);
-        }
-        
-        .farm-image-card img {
-            transition: transform 0.3s ease;
-        }
-        
-        .farm-image-card:hover img {
-            transform: scale(1.1);
-        }
+                var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+                var toggles = [].slice.call(document.querySelectorAll('[data-rot-toggle]'));
+                var paused = false;
 
-        /* Nuevos estilos para la galería mejorada */
-        .farm-gallery-card {
-            transition: all 0.3s ease;
-            border: none !important;
-        }
-        
-        .farm-gallery-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
-        }
-        
-        .farm-gallery-card img {
-            transition: all 0.3s ease;
-        }
-        
-        .farm-gallery-card:hover img {
-            transform: scale(1.05);
-        }
-        
-        /* Estadísticas animadas */
-        .farm-gallery-card .fas {
-            transition: all 0.3s ease;
-        }
-        
-        .farm-gallery-card:hover .fas {
-            transform: scale(1.1);
-        }
-        
-        /* Gradiente de fondo */
-        #nuestras-fincas {
-            position: relative;
-        }
-        
-        #nuestras-fincas::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23e0e0e0" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23e0e0e0" opacity="0.1"/><circle cx="50" cy="10" r="1" fill="%23e0e0e0" opacity="0.1"/><circle cx="10" cy="90" r="1" fill="%23e0e0e0" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            opacity: 0.3;
-            z-index: 0;
-        }
-        
-        #nuestras-fincas > .container {
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* Estilos para el nombre de la marca en móvil */
-        .mobile-brand-name {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary-green);
-            text-decoration: none;
-        }
-        
-        .mobile-brand-name:hover {
-            color: var(--dark-green);
-            text-decoration: none;
-        }
-        
-        /* Estilos para Swiper de productos */
-        .products-container-outer {
-            display: flex;
-            align-items: center;
-            position: relative;
-            max-width: 1400px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-        
-        .products-swiper-wrapper {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-            border-radius: 15px;
-            background: white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 0 7px; /* Padding específico para escritorio */
-        }
-        
-        .products-swiper {
-            padding: 20px 0 40px 0;
-            overflow: hidden;
-        }
-        
-        .external-nav {
-            z-index: 10;
-            display: flex;
-            align-items: center;
-        }
-        
-        .external-nav-prev {
-            margin-right: 20px;
-        }
-        
-        .external-nav-next {
-            margin-left: 20px;
-        }
-        
-        .external-nav-btn {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #2E7D32 0%, #388E3C 100%);
-            color: white;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(46, 125, 50, 0.3);
-        }
-        
-        .external-nav-btn:hover {
-            transform: scale(1.1) translateY(-2px);
-            box-shadow: 0 6px 25px rgba(46, 125, 50, 0.4);
-            background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 100%);
-        }
-        
-        .external-nav-btn:active {
-            transform: scale(0.95);
-        }
-        
-        .swiper-slide {
-            height: auto;
-            display: flex;
-            align-items: stretch;
-        }
-        
-        /* Product Card Styles */
-        .product-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            cursor: pointer;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-        
-        .product-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-        
-        .product-image-container {
-            position: relative;
-            height: 280px;
-            overflow: hidden;
-        }
-        
-        .product-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: all 0.4s ease;
-        }
-        
-        /* Efecto hover desactivado - imagen siempre nítida */
-        .product-card:hover .product-image {
-            filter: none !important;
-            transform: none !important;
-        }
-        
-        .hover-blur-effect {
-            display: none !important;
-            opacity: 0 !important;
-            visibility: hidden !important;
-        }
-        
-        .product-card:hover .hover-blur-effect {
-            display: none !important;
-            opacity: 0 !important;
-            visibility: hidden !important;
-        }
-        
-        .hover-content {
-            text-align: center;
-            transform: scale(0.8);
-            transition: transform 0.4s ease;
-        }
-        
-        .product-card:hover .hover-content {
-            transform: scale(1);
-        }
-        
-        .product-overlay {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            z-index: 2;
-        }
-        
-        .badge-luxury {
-            background: linear-gradient(135deg, #2E7D32 0%, #43A047 100%);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        
-        .product-rating {
-            background: rgba(255,255,255,0.9);
-            padding: 4px 8px;
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .product-info {
-            padding: 25px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .product-name {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #2E7D32;
-            margin-bottom: 8px;
-            line-height: 1.3;
-        }
-        
-        .product-scientific {
-            font-style: italic;
-            color: #666;
-            margin-bottom: 15px;
-            font-size: 0.95rem;
-        }
-        
-        .product-specs {
-            margin-bottom: 15px;
-        }
-        
-        .spec-item {
-            display: flex;
-            align-items: center;
-            font-size: 0.9rem;
-            color: #555;
-        }
-        
-        .spec-item i {
-            margin-right: 8px;
-            width: 16px;
-        }
-        
-        .product-price {
-            margin-top: auto;
-        }
-        
-        .price-badge {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            color: #2E7D32;
-            border: 2px solid #2E7D32;
-            display: inline-block;
-        }
-        
-        /* Responsive para el contenedor externo */
-        @media (max-width: 1200px) {
-            .products-container-outer {
-                padding: 0 15px;
-            }
-            
-            .products-swiper-wrapper {
-                padding: 0 5px;
-            }
-            
-            .external-nav-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 18px;
-            }
-            
-            .external-nav-prev {
-                margin-right: 15px;
-            }
-            
-            .external-nav-next {
-                margin-left: 15px;
-            }
-        }
+                // La grande va primero: así la ventana le deja la foto que tenía
+                // la primera pequeña. La lista se relee en cada paso porque la
+                // foto que entra sustituye a la anterior en el DOM.
+                function slotsOf(box) {
+                    var imgs = [].slice.call(box.querySelectorAll('[data-rot-img]'));
+                    var big = imgs.filter(function (i) {
+                        return i.getAttribute('data-rot-img') === 'big';
+                    });
+                    return big.concat(imgs.filter(function (i) { return big.indexOf(i) < 0; }));
+                }
 
-        @media (max-width: 768px) {
-            .products-container-outer {
-                flex-direction: row;
-                padding: 0 10px;
-                justify-content: center;
-            }
-            
-            .products-swiper-wrapper {
-                padding: 0 2px;
-            }
-            
-            /* Ocultar las flechas en móvil */
-            .external-nav {
-                display: none;
-            }
-            
-            .external-nav-prev,
-            .external-nav-next {
-                display: none;
-            }
-            
-            .products-swiper-wrapper {
-                order: 1;
-                margin-bottom: 20px;
-            }
-            
-            .product-image-container {
-                height: 220px;
-            }
-            
-            .product-info {
-                padding: 20px;
-            }
-            
-            .product-name {
-                font-size: 1.2rem;
-            }
-        }
-        
-        /* Estilos personalizados para SweetAlert2 */
-        .custom-swal-popup {
-            border-radius: 15px !important;
-            background: white !important;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2) !important;
-        }
-        
-        .product-modal-custom {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            max-width: 100%;
-        }
-        
-        .product-hero-section {
-            position: relative;
-            height: 300px;
-            overflow: hidden;
-        }
-        
-        .product-hero-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .hero-overlay {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgb(0 0 0 / 28%);
-            padding: 10px 15px;
-            border-radius: 20px;
-        }
-        
-        .popularity-badge {
-            display: flex;
-            align-items: center;
-            color: white;
-        }
-        
-        .rating-text {
-            margin-left: 8px;
-            font-weight: bold;
-        }
-        
-        .product-info-section {
-            padding: 30px;
-        }
-        
-        .product-header {
-            text-align: center;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 20px;
-        }
-        
-        .product-title {
-            color: #2E7D32;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        
-        .product-scientific {
-            color: #666;
-            font-size: 1.1rem;
-            margin-bottom: 0;
-        }
-        
-        .product-description {
-            margin-bottom: 25px;
-            line-height: 1.6;
-            font-size: 1rem;
-            color: #555;
-        }
-        
-        .product-specs {
-            margin-bottom: 25px;
-        }
-        
-        .spec-grid {
-            display: grid;
-            gap: 15px;
-        }
-        
-        .spec-item {
-            display: flex;
-            align-items: flex-start;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #2E7D32;
-        }
-        
-        .spec-item i {
-            margin-right: 12px;
-            margin-top: 2px;
-            font-size: 1.2rem;
-        }
-        
-        .spec-item strong {
-            display: block;
-            color: #333;
-            margin-bottom: 4px;
-        }
-        
-        .spec-item span {
-            color: #666;
-        }
-        
-        .product-features {
-            margin-bottom: 25px;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-        }
-        
-        .feature-column h5 {
-            color: #2E7D32;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-        
-        .feature-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .feature-list li {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 10px;
-            padding: 8px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .feature-list li:last-child {
-            border-bottom: none;
-        }
-        
-        .feature-list i {
-            margin-right: 10px;
-            margin-top: 2px;
-        }
-        
-        .product-markets h5 {
-            color: #2E7D32;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-        
-        .markets-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        
-        .market-tag {
-            background: linear-gradient(135deg, #2E7D32 0%, #43A047 100%);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-        
-        .custom-swal-confirm {
-            border-radius: 8px !important;
-            font-weight: 600 !important;
-            padding: 12px 24px !important;
-        }
-        
-        .custom-swal-cancel {
-            border-radius: 8px !important;
-            font-weight: 600 !important;
-            padding: 12px 24px !important;
-        }
-        
-        /* Responsive para el modal */
-        @media (max-width: 768px) {
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .product-info-section {
-                padding: 20px;
-            }
-            
-            .product-hero-section {
-                height: 200px;
-            }
-        }
-        
-        /* Estilos para el modal de productos */
-        #productModal .modal-dialog {
-            max-width: 900px;
-        }
-        
-        .product-hero-image {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero-overlay {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgb(0 0 0 / 28%);
-            padding: 10px 15px;
-            border-radius: 20px;
-        }
-        
-        .popularity-badge {
-            display: flex;
-            align-items: center;
-        }
-        
-        .characteristics-cards .char-card,
-        .specifications-cards .spec-card {
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 8px;
-            border-left: 4px solid var(--primary-green);
-            display: flex;
-            align-items: flex-start;
-        }
-        
-        .char-card .char-icon {
-            margin-right: 12px;
-            margin-top: 2px;
-        }
-        
-        .char-card .char-content {
-            flex: 1;
-        }
-        
-        .uses-list .use-item,
-        .advantages-list .advantage-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .uses-list .use-item:last-child,
-        .advantages-list .advantage-item:last-child {
-            border-bottom: none;
-        }
-        
-        .markets-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        
-        .market-badge {
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        
-        .price-section {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-        }
-        
-        .price-badge {
-            background: white;
-            padding: 12px 20px;
-            border-radius: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            display: inline-flex;
-            align-items: center;
-            font-weight: bold;
-            color: var(--primary-green);
-            font-size: 1.1rem;
-        }
-        
-        .btn-modal-action {
-            padding: 12px 20px;
-            font-weight: 600;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-modal-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        
-        .line-height-lg {
-            line-height: 1.8;
-        }
+                function swap(current, entry) {
+                    // Se clona la propia foto para heredar sus clases: así la
+                    // capa que entra cae exactamente sobre la que sustituye.
+                    var next = current.cloneNode(false);
+                    var isBig = current.getAttribute('data-rot-img') === 'big';
+                    next.removeAttribute('loading');
+                    next.classList.add('pg-rot-in');
+                    if (isBig) next.setAttribute('srcset', entry.s + ' 800w, ' + entry.l + ' 1600w');
+                    next.setAttribute('src', entry.s);
+                    current.parentNode.insertBefore(next, current.nextSibling);
 
-        /* Efecto blur hover en las tarjetas del slider */
-        .product-card {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
+                    var drop = function () {
+                        if (next.parentNode) next.parentNode.removeChild(next);
+                    };
+                    var enter = function () {
+                        requestAnimationFrame(function () {
+                            requestAnimationFrame(function () {
+                                next.classList.add('is-in');
+                            });
+                        });
+                        setTimeout(function () {
+                            if (current.parentNode) current.parentNode.removeChild(current);
+                            next.classList.remove('pg-rot-in', 'is-in');
+                        }, SETTLE);
+                    };
 
-        .product-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        }
+                    // decode() evita que el cambio de src parpadee; si la imagen
+                    // no carga, la casilla se queda con la que ya tenía.
+                    if (next.decode) next.decode().then(enter, drop);
+                    else {
+                        next.onload = enter;
+                        next.onerror = drop;
+                    }
+                }
 
-        .product-card:hover .product-image {
-            filter: blur(1px);
-        }
+                var running = boxes.map(function (box) {
+                    // La ventana arranca donde apunta la foto grande del HTML,
+                    // que ya es la ventana de partida: el relevo pequeña ->
+                    // grande se cumple desde el primer paso.
+                    var big = box.querySelector('[data-rot-img="big"]');
+                    var head = big ? POOL.map(function (e) { return e.s; })
+                                         .indexOf(big.getAttribute('src')) : -1;
 
-        .product-card:hover .product-details {
-            background: linear-gradient(135deg, rgba(46, 125, 50, 0.95) 0%, rgba(67, 160, 71, 0.95) 100%);
-            color: white !important;
-        }
+                    var state = {
+                        box: box,
+                        head: head < 0 ? POOL.length - 1 : head,
+                        timer: null,
+                        onScreen: false
+                    };
 
-        .product-card:hover .product-title,
-        .product-card:hover .product-scientific-name,
-        .product-card:hover .product-description {
-            color: white !important;
-        }
+                    // La entrada que le toca a una casilla. Si esa foto ya es
+                    // la que muestra, se avanza una más: nunca dos veces
+                    // seguidas la misma imagen en la misma casilla (pasa si un
+                    // relevo anterior no llegó a cargar).
+                    function entryFor(slot, offset) {
+                        var idx = (state.head + offset) % POOL.length;
+                        var entry = POOL[idx];
+                        if (slot && slot.getAttribute('src') === entry.s) {
+                            entry = POOL[(idx + 1) % POOL.length];
+                        }
+                        return entry;
+                    }
 
-        .product-image {
-            transition: filter 0.3s ease;
-        }
+                    state.beat = function () {
+                        state.head = (state.head + 1) % POOL.length;
+                        slotsOf(box).forEach(function (img, i) {
+                            setTimeout(function () {
+                                if (!img.parentNode) return;
+                                swap(img, entryFor(img, i));
+                            }, i * STAGGER);
+                        });
+                    };
 
-        .product-details {
-            transition: all 0.3s ease;
-        }
+                    state.start = function () {
+                        if (state.timer || paused || reduce.matches) return;
+                        state.timer = setInterval(state.beat, BEAT);
+                    };
 
-        /* Estilo mejorado para las tarjetas del slider */
-        .product-card {
-            border: none;
-            border-radius: 15px;
-            overflow: hidden;
-            position: relative;
-            background: white;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
+                    state.stop = function () {
+                        if (state.timer) clearInterval(state.timer);
+                        state.timer = null;
+                    };
 
-        .product-card .card-body {
-            padding: 1.5rem;
-        }
-        
-        /* Estilos para el logo en móvil */
-        .logo-img-mobile {
-            height: 40px !important;
-            width: auto;
-            max-width: 120px;
-            object-fit: contain;
-        }
-        
-        /* Estilos para el logo en escritorio */
-        .logo-img {
-            height: 60px;
-            width: auto;
-            max-width: 200px;
-            object-fit: contain;
-            transition: transform 0.3s ease;
-        }
-        
-        .logo-img:hover {
-            transform: scale(1.05);
-        }
-        
-        /* Responsive para el logo */
-        @media (max-width: 576px) {
-            .logo-img-mobile {
-                height: 35px !important;
-                max-width: 100px;
-            }
-        }
-    </style>
+                    if ('IntersectionObserver' in window) {
+                        new IntersectionObserver(function (entries) {
+                            state.onScreen = entries.some(function (e) { return e.isIntersecting; });
+                            if (state.onScreen && !document.hidden) state.start(); else state.stop();
+                        }, { threshold: 0.15 }).observe(box);
+                    } else {
+                        state.onScreen = true;
+                        state.start();
+                    }
+
+                    return state;
+                });
+
+                // Si el navegador no llegó a entregar el observer (por ejemplo
+                // porque la página se cargó en segundo plano), se comprueba la
+                // posición a mano: así el movimiento se recupera solo al volver
+                // a la pestaña, sin quedarse congelado.
+                function seVe(box) {
+                    var r = box.getBoundingClientRect();
+                    return r.width > 0 && r.bottom > 0 && r.top < (window.innerHeight || 0);
+                }
+
+                function resumeVisible() {
+                    if (document.hidden) return;
+                    running.forEach(function (s) {
+                        if (!s.onScreen) s.onScreen = seVe(s.box);
+                        if (s.onScreen) s.start();
+                    });
+                }
+
+                // Un solo mando: los dos botones mandan sobre todo el movimiento.
+                function setPaused(value) {
+                    paused = value;
+                    toggles.forEach(function (b) {
+                        b.setAttribute('aria-pressed', String(paused));
+                        b.setAttribute('aria-label', paused
+                            ? 'Reanudar el cambio automático de imágenes'
+                            : 'Pausar el cambio automático de imágenes');
+                    });
+                    if (paused) running.forEach(function (s) { s.stop(); });
+                    else resumeVisible();
+                }
+
+                if (reduce.matches) {
+                    toggles.forEach(function (b) { b.hidden = true; });
+                    paused = true;
+                } else {
+                    toggles.forEach(function (b) {
+                        b.addEventListener('click', function () { setPaused(!paused); });
+                    });
+                }
+
+                document.addEventListener('visibilitychange', function () {
+                    if (document.hidden) running.forEach(function (s) { s.stop(); });
+                    else resumeVisible();
+                });
+
+                if (reduce.addEventListener) {
+                    reduce.addEventListener('change', function () {
+                        if (reduce.matches) setPaused(true);
+                        else {
+                            toggles.forEach(function (b) { b.hidden = false; });
+                            setPaused(false);
+                        }
+                    });
+                }
+            })();
+
+            // ---- Vídeo de fondo de la portada -----------------------------
+            // ~5,7 MB en un archivo: no se pide hasta que se sabe que toca
+            // (pantalla grande, sin ahorro de datos y sin «reducir movimiento»).
+            // La foto con su ken burns queda debajo como respaldo, así que la
+            // portada nunca se queda en negro. Y como es un fondo que debe
+            // permanecer, se reanuda solo en cuanto la portada vuelve a verse y
+            // en cuanto la pestaña recupera el foco.
+            (function () {
+                var hero = document.querySelector('.pg-hero');
+                var video = hero && hero.querySelector('.pg-hero__video');
+                if (!hero || !video) return;
+
+                var src = video.getAttribute('data-src');
+                if (!src) return;
+
+                var wide = window.matchMedia('(min-width: 992px)');
+                var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+                var conn = navigator.connection || navigator.mozConnection || {};
+
+                function allowed() {
+                    if (conn.saveData) return false;
+                    if (/^([23]g|slow-2g)$/.test(conn.effectiveType || '')) return false;
+                    return wide.matches && !reduce.matches;
+                }
+
+                function play() {
+                    if (document.hidden) return;
+                    var p = video.play();
+                    if (p && p.catch) p.catch(function () {});
+                }
+
+                function start() {
+                    if (!allowed()) { stop(); return; }
+                    if (!video.getAttribute('src')) {
+                        video.setAttribute('src', src);
+                        video.load();
+                    }
+                    play();
+                }
+
+                function stop() {
+                    video.pause();
+                    hero.classList.remove('has-video');
+                    video.classList.remove('is-on');
+                }
+
+                // El fundido de entrada espera a que haya imagen de verdad.
+                video.addEventListener('playing', function () {
+                    hero.classList.add('has-video');
+                    video.classList.add('is-on');
+                });
+                video.addEventListener('error', stop);
+
+                document.addEventListener('visibilitychange', function () {
+                    if (document.hidden) video.pause();
+                    else if (allowed()) play();
+                });
+
+                if ('IntersectionObserver' in window) {
+                    new IntersectionObserver(function (entries) {
+                        if (entries.some(function (e) { return e.isIntersecting; })) play();
+                        else video.pause();
+                    }, { threshold: 0.05 }).observe(hero);
+                }
+
+                [wide, reduce].forEach(function (mq) {
+                    if (mq.addEventListener) mq.addEventListener('change', start);
+                });
+
+                // El vídeo pesa ~5,6 MB: no debe competir con la primera
+                // pintura, así que se pide cuando la página ya está cargada.
+                // Hasta entonces se ve la foto con su ken burns.
+                if (document.readyState === 'complete') start();
+                else window.addEventListener('load', start);
+            })();
+
+            // Un clip a la vez: al pulsar se carga el video y se reproduce
+            var reels = document.querySelectorAll('.pg-reel');
+            reels.forEach(function (reel) {
+                reel.addEventListener('click', function () {
+                    var video = reel.querySelector('video');
+                    if (!video) return;
+                    var alreadyPlaying = reel.classList.contains('is-playing');
+
+                    reels.forEach(function (other) {
+                        if (other === reel) return;
+                        var v = other.querySelector('video');
+                        other.classList.remove('is-playing');
+                        if (v) { v.pause(); v.removeAttribute('src'); v.load(); }
+                    });
+
+                    if (alreadyPlaying) {
+                        reel.classList.remove('is-playing');
+                        video.pause();
+                        return;
+                    }
+                    if (!video.getAttribute('src')) {
+                        video.setAttribute('src', reel.getAttribute('data-reel'));
+                    }
+                    reel.classList.add('is-playing');
+                    video.play().catch(function () {
+                        reel.classList.remove('is-playing');
+                    });
+                });
+            });
+        })();
+    </script>
+
 </body>
 
 </html>

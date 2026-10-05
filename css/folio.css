@@ -1,0 +1,2745 @@
+/* ==========================================================================
+   Prime Green — capa editorial (v2)
+   --------------------------------------------------------------------------
+   Reemplaza la presentación de las secciones usando el material real
+   (fotos aéreas de la finca y reels). Se apoya en premium.css para el
+   encaje de secciones y añade encima la piel editorial:
+     · lienzo marfil + verde profundo, fotografía como protagonista
+     · Playfair Display para titulares, Poppins para interfaz
+     · retícula asimétrica, filetes finos, radios contenidos
+     · movimiento lento (ken burns) y aparición al hacer scroll
+   ========================================================================== */
+
+/* ----------------------------------------------------------- 1. Paleta */
+:root {
+  --pg-canvas: #faf8f2;
+  --pg-surface: #ffffff;
+  --pg-surface-2: #f3efe5;
+  --pg-surface-3: #e9e4d7;
+
+  --pg-ink: #16211a;
+  --pg-ink-2: #3f4a40;
+  --pg-ink-3: #5f6b5e;
+  --pg-ink-4: #8b9489;
+  --pg-line: #e4dfd2;
+  --pg-line-strong: #cfc8b6;
+  --pg-ink-dark: #0d1a12;
+
+  --green-deep: #123a20;
+  --green-mid: #1f5c2c;
+  --green: #2e7d32;
+  --green-soft: #e8f0e4;
+  --lime: #b9d47f;
+
+  --pg-r-sm: 4px;
+  --pg-r-md: 6px;
+  --pg-r-lg: 10px;
+  --pg-r-xl: 14px;
+
+  --pg-shadow-1: 0 1px 2px rgba(13, 26, 18, 0.04);
+  --pg-shadow-2: 0 10px 30px rgba(13, 26, 18, 0.08);
+  --pg-shadow-3: 0 24px 60px rgba(13, 26, 18, 0.16);
+
+  --f-max: 1280px;
+  --f-gutter: clamp(1.25rem, 4vw, 3rem);
+  --f-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --f-ui: "Poppins", -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Toda imagen de contenido se ajusta a su caja: los atributos del HTML
+   fijan altura si no se anula, y eso rompe el encaje de las secciones. */
+.pg-hero img,
+.pg-tile img,
+.pg-farm img,
+.pg-person img,
+.pg-cta img,
+.pg-about img {
+  height: auto;
+}
+
+.pg-hero__img,
+.pg-tile img,
+.pg-farm__media img,
+.pg-person__media img,
+.pg-reel img,
+.pg-reel video,
+.pg-cta__bg img {
+  display: block;
+  height: 100%;
+}
+
+.pg-container {
+  width: 100%;
+  max-width: var(--f-max);
+  margin-inline: auto;
+  padding-inline: var(--f-gutter);
+}
+
+/* ------------------------------------------------------------ 2. Base */
+body {
+  background: var(--pg-canvas);
+  color: var(--pg-ink-2);
+  font-family: var(--f-ui);
+}
+
+h1, h2, h3, .pg-display {
+  font-family: var(--f-display);
+  color: var(--pg-ink);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.pg-eyebrow {
+  display: block;
+  font-family: var(--f-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 1rem;
+}
+
+.pg-eyebrow--light {
+  color: rgba(255, 255, 255, 0.86);
+  text-shadow: 0 1px 12px rgba(9, 22, 13, 0.75), 0 1px 3px rgba(9, 22, 13, 0.6);
+}
+
+.pg-lede {
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  line-height: 1.75;
+  color: var(--pg-ink-3);
+  max-width: 46rem;
+}
+
+.pg-rule {
+  height: 1px;
+  background: var(--pg-line);
+  border: 0;
+  margin: 0;
+}
+
+/* --------------------------------------------------------- 3. Botones */
+.pg-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.95rem 1.75rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-family: var(--f-ui);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--pg-base) var(--pg-ease), background-color var(--pg-base) var(--pg-ease),
+    color var(--pg-base) var(--pg-ease), border-color var(--pg-base) var(--pg-ease),
+    box-shadow var(--pg-base) var(--pg-ease);
+}
+
+.pg-btn:hover {
+  text-decoration: none;
+}
+
+.pg-btn--solid {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+.pg-btn--solid:hover {
+  background: var(--green-deep);
+  border-color: var(--green-deep);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(18, 58, 32, 0.28);
+}
+
+.pg-btn--ghost {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.pg-btn--ghost:hover {
+  background: #fff;
+  border-color: #fff;
+  color: var(--green-deep);
+  transform: translateY(-2px);
+}
+
+.pg-btn--line {
+  background: transparent;
+  border-color: var(--pg-line-strong);
+  color: var(--pg-ink);
+}
+
+.pg-btn--line:hover {
+  background: var(--green-deep);
+  border-color: var(--green-deep);
+  color: #fff;
+}
+
+.pg-btn--dark {
+  background: var(--green-deep);
+  border-color: var(--green-deep);
+  color: #fff;
+}
+
+.pg-btn--dark:hover {
+  background: #fff;
+  border-color: #fff;
+  color: var(--green-deep);
+}
+
+.pg-btn i {
+  font-size: 0.75rem;
+}
+
+/* ----------------------------------------------------------- 4. Portada */
+.pg-hero {
+  position: relative;
+  overflow: hidden;
+  min-height: calc(100svh - var(--pg-offset));
+  min-height: calc(100vh - var(--pg-offset));
+  display: flex;
+  align-items: flex-end;
+  background: var(--green-deep);
+  isolation: isolate;
+}
+
+.pg-hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  /* contiene el zoom ken burns: nada se sale de la portada */
+  overflow: hidden;
+}
+
+.pg-hero__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: 60% 45%;
+  animation: pg-kenburns 28s var(--pg-ease) infinite alternate;
+}
+
+@keyframes pg-kenburns {
+  from {
+    transform: scale(1.02) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.14) translate3d(-1.5%, -1.5%, 0);
+  }
+}
+
+/* Vídeo de portada: entra con un fundido cuando de verdad está
+   reproduciéndose, así no se ve un salto ni un fotograma en negro. */
+.pg-hero__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 900ms var(--pg-ease);
+}
+
+.pg-hero__video.is-on {
+  opacity: 1;
+}
+
+/* Con el vídeo delante, el ken burns de la foto ya no se ve: se para para no
+   tener dos animaciones compitiendo por el mismo trozo de pantalla. */
+.pg-hero.has-video .pg-hero__img {
+  animation: none;
+}
+
+.pg-hero__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+      180deg,
+      rgba(9, 22, 13, 0.52) 0%,
+      rgba(9, 22, 13, 0.34) 20%,
+      rgba(9, 22, 13, 0.55) 34%,
+      rgba(9, 22, 13, 0.74) 62%,
+      rgba(9, 22, 13, 0.9) 100%
+    ),
+    linear-gradient(90deg, rgba(9, 22, 13, 0.6) 0%, rgba(9, 22, 13, 0) 68%);
+}
+
+.pg-hero__inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding-block: clamp(1.75rem, 6vh, 5rem);
+}
+
+/* Titular atado a la altura de la ventana: la portada nunca se recorta.
+   En móvil manda el ancho, porque la altura no es la restricción. */
+.pg-hero__title {
+  font-size: clamp(2rem, 10vw, 3.25rem);
+  line-height: 1.05;
+  color: #fff;
+  margin-bottom: clamp(0.85rem, 2vh, 1.5rem);
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.35);
+  max-width: 26ch;
+}
+
+@media (min-width: 992px) {
+  .pg-hero__title {
+    font-size: clamp(2rem, 8vh, 5rem);
+    line-height: 1.03;
+  }
+}
+
+.pg-hero__title em {
+  font-style: italic;
+  color: var(--lime);
+}
+
+.pg-hero__lede {
+  max-width: 44ch;
+  font-size: clamp(0.95rem, 1.55vh + 0.4rem, 1.15rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.86);
+  margin-bottom: clamp(1.1rem, 3vh, 2.25rem);
+}
+
+.pg-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.pg-hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.25rem, 4vw, 3.5rem);
+  margin: clamp(1.35rem, 3.4vh, 2.75rem) 0 0;
+  padding-top: clamp(0.9rem, 2.2vh, 1.75rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.pg-hero__stat {
+  margin: 0;
+}
+
+.pg-hero__stat dt {
+  font-family: var(--f-display);
+  font-size: clamp(1.35rem, 3.2vh, 2.1rem);
+  font-weight: 600;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.pg-hero__stat dd {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.pg-hero__cue {
+  position: absolute;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+  animation: pg-cue 2.6s var(--pg-ease) infinite;
+}
+
+.pg-hero__cue:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+/* ------------------------------------------------------ 5. Sección base */
+.pg-section {
+  padding-block: clamp(3rem, 8vh, 6rem);
+}
+
+.pg-section__head {
+  max-width: 46rem;
+  margin-bottom: clamp(1.75rem, 4vh, 3rem);
+}
+
+.pg-section__head--center {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.pg-section__title {
+  font-size: clamp(1.75rem, 1.2rem + 2vw, 3rem);
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.pg-section__title em {
+  font-style: italic;
+  color: var(--green);
+}
+
+.pg-section--tint {
+  background: var(--pg-surface-2);
+}
+
+.pg-section--dark {
+  background: var(--green-deep);
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.pg-section--dark .pg-section__title,
+.pg-section--dark h2,
+.pg-section--dark h3 {
+  color: #fff;
+}
+
+.pg-section--dark .pg-section__title em {
+  color: var(--lime);
+}
+
+/* --------------------------------------------------------- 6. Nosotros */
+.pg-about__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  align-items: center;
+}
+
+.pg-about__media {
+  position: relative;
+  margin: 0;
+}
+
+.pg-about__media img:first-child {
+  display: block;
+  width: 100%;
+  /* los atributos width/height del HTML actúan como altura fija: hay que anularla */
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--pg-r-lg);
+  box-shadow: var(--pg-shadow-2);
+}
+
+.pg-checks {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.pg-checks li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  font-size: 0.9375rem;
+  color: var(--pg-ink-2);
+}
+
+.pg-checks i {
+  color: var(--green);
+  font-size: 0.75rem;
+}
+
+.pg-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: clamp(1.5rem, 4vh, 2.5rem);
+  padding-top: clamp(1.25rem, 3vh, 2rem);
+  border-top: 1px solid var(--pg-line);
+}
+
+.pg-metric dt {
+  font-family: var(--f-display);
+  font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.5rem);
+  font-weight: 600;
+  color: var(--green);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.pg-metric dd {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pg-ink-3);
+}
+
+/* --------------------------------------------------------- 7. Mosaico */
+.pg-mosaic {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  /* El mínimo mantiene las filas legibles en pantallas bajas; el 1fr deja que
+     crezcan para repartirse el sobrante del ajuste a pantalla (ver §19). */
+  grid-auto-rows: minmax(clamp(120px, 16vh, 190px), 1fr);
+  gap: clamp(0.5rem, 1vw, 0.9rem);
+}
+.pg-tile {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--pg-r-lg);
+  background: var(--pg-surface-3);
+  display: block;
+}
+
+/* Todas las fotos llenan la casilla. El alto lo fija la retícula, así que
+   pueden superponerse mientras una entra sobre la anterior. */
+.pg-tile__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms var(--pg-ease);
+}
+
+.pg-tile:hover .pg-tile__img:not(.pg-rot-in) {
+  transform: scale(1.06);
+}
+
+.pg-tile__cap {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 3;
+  padding: 2.5rem 1.1rem 1rem;
+  background: linear-gradient(transparent, rgba(9, 22, 13, 0.82));
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity var(--pg-base) var(--pg-ease), transform var(--pg-base) var(--pg-ease);
+}
+
+.pg-tile:hover .pg-tile__cap,
+.pg-tile:focus-visible .pg-tile__cap {
+  opacity: 1;
+  transform: none;
+}
+
+/* -------------------------------------------- 7-bis. Cambio de fotos ---
+   La capa que entra se superpone a la que sustituye y se funde con ella: la
+   foto de la casilla grande crece (llega desde una casilla pequeña) y las
+   pequeñas se asientan desde algo más grandes. Lo usan tanto el mosaico de la
+   galería como la pareja de fotos de «La finca» (#acerca). */
+.pg-rot-in {
+  z-index: 2;
+  opacity: 0;
+  transform: scale(1.08);
+  transition: none;
+}
+
+.pg-tile--a .pg-rot-in,
+.pg-about__media .pg-rot-in[data-rot-img="big"] {
+  transform: scale(0.88);
+}
+
+.pg-rot-in.is-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 600ms var(--pg-ease), transform 900ms var(--pg-ease);
+}
+
+/* «La finca» muestra una sola foto, así que el relevo no puede leerse como
+   «una capa que entra desde otro tamaño»: es un fundido cruzado con un
+   acercamiento muy leve, más largo que en el mosaico para que se sienta
+   cinematográfico. El elemento que entra va por encima (z-index 2) y el que
+   sale se retira cuando el fundido ha terminado (SETTLE en index.html). */
+.pg-about__media .pg-rot-in[data-rot-img="big"] {
+  transform: scale(1.045);
+  transform-origin: 50% 55%;
+}
+
+.pg-about__media .pg-rot-in.is-in {
+  transition: opacity 1200ms var(--pg-ease), transform 1700ms var(--pg-ease);
+}
+
+/* En «La finca» el recuadro grande es la foto en flujo (le da el alto a la
+   figura): la capa que entra se saca de flujo y cubre su misma caja. */
+.pg-about__media > .pg-about__main.pg-rot-in {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--pg-r-lg);
+  box-shadow: var(--pg-shadow-2);
+}
+
+/* Botón de pausa: las fotos se mueven solas, así que hay que poder detenerlas.
+   El icono va dibujado con CSS: el subset de Font Awesome sólo trae «play». */
+.pg-rot-toggle {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  z-index: 4;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  background: rgba(9, 22, 13, 0.5);
+  color: #fff;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: background-color var(--pg-base) var(--pg-ease);
+}
+
+.pg-rot-toggle:hover,
+.pg-rot-toggle:focus-visible {
+  background: rgba(9, 22, 13, 0.78);
+}
+
+.pg-rot-toggle[hidden] {
+  display: none;
+}
+
+.pg-rot-toggle__glyph {
+  width: 11px;
+  height: 12px;
+  border-left: 3px solid currentColor;
+  border-right: 3px solid currentColor;
+}
+
+.pg-rot-toggle[aria-pressed="true"] .pg-rot-toggle__glyph {
+  width: 0;
+  height: 0;
+  border-left: 11px solid currentColor;
+  border-right: 0;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+}
+
+/* Dos filas: una toma alta a la izquierda y el resto escalonadas */
+.pg-tile--a { grid-column: span 5; grid-row: span 2; }
+.pg-tile--b { grid-column: span 4; }
+.pg-tile--c { grid-column: span 3; }
+.pg-tile--d { grid-column: span 4; }
+.pg-tile--e { grid-column: span 3; }
+
+/* ---------------------------------------------------------- 8. Fincas */
+.pg-farms {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(0.75rem, 1.6vw, 1.25rem);
+}
+
+.pg-farm {
+  display: flex;
+  flex-direction: column;
+  background: var(--pg-surface);
+  border: 1px solid var(--pg-line);
+  border-radius: var(--pg-r-lg);
+  overflow: hidden;
+  transition: box-shadow var(--pg-base) var(--pg-ease), transform var(--pg-base) var(--pg-ease);
+}
+
+.pg-farm:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--pg-shadow-2);
+}
+
+.pg-farm__media {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  margin: 0;
+}
+
+.pg-farm__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms var(--pg-ease);
+}
+
+.pg-farm:hover .pg-farm__media img {
+  transform: scale(1.05);
+}
+
+.pg-farm__num {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--green-deep);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: var(--f-ui);
+}
+
+.pg-farm__body {
+  padding: clamp(0.9rem, 1.6vw, 1.25rem);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.pg-farm__title {
+  font-family: var(--f-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--pg-ink);
+  margin-bottom: 0.4rem;
+}
+
+.pg-farm__text {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--pg-ink-3);
+  margin-bottom: 0.85rem;
+}
+
+.pg-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: auto 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pg-chips li {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--green-deep);
+  background: var(--green-soft);
+  border-radius: 999px;
+  padding: 0.3rem 0.65rem;
+}
+
+/* ------------------------------------------------------------ 9. Mapa */
+.pg-map-frame {
+  background: var(--pg-surface);
+  border: 1px solid var(--pg-line);
+  border-radius: var(--pg-r-xl);
+  padding: clamp(0.5rem, 1.2vw, 1rem);
+  box-shadow: var(--pg-shadow-1);
+}
+
+/* Mapamundi propio: imagen de puntos servida desde el dominio (se genera con
+   tools/build-world-map.py). Sustituye a los tiles de OpenStreetMap, cuya
+   política de uso bloquea la aplicación cuando un sitio comercial pasa de
+   cierto volumen de peticiones. Sin terceros ni peticiones de red.
+   La anchura se limita por la altura deseada, no al revés: así el aspect-ratio
+   se mantiene exacto y los marcadores en % caen donde deben.
+   El alto se ajusta por ALTO de pantalla y no por ancho porque es lo que de
+   verdad escasea: con 40vh el mapa se quedaba en 288 px en un portátil de 720
+   y dejaba media caja vacía a los lados. 48vh es el punto en que el mapa llena
+   el ancho disponible en escritorio sin empujar la sección fuera de pantalla
+   (el hueco medido da para 47-54 % de vh según el perfil). */
+:root {
+  --mapa-alto: clamp(240px, 48vh, 620px);
+}
+
+.pg-worldmap {
+  position: relative;
+  width: min(100%, calc(var(--mapa-alto) * 2028 / 800));
+  aspect-ratio: 2028 / 800;
+  margin: 0 auto;
+  border-radius: var(--pg-r-md);
+  overflow: hidden;
+  background: var(--pg-surface-2);
+  z-index: 1;
+}
+
+.pg-worldmap__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pg-worldmap__pins {
+  position: absolute;
+  inset: 0;
+}
+
+/* Marcador: el color codifica el nivel de demanda. Los tres pasos mantienen
+   ≥3:1 sobre el fondo claro del mapamundi. */
+.pg-pin {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--pin, var(--green));
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(13, 26, 18, 0.3);
+  transition: transform var(--pg-base) var(--pg-ease), box-shadow var(--pg-base) var(--pg-ease);
+}
+
+/* Área táctil de 44 px sin agrandar el punto visible */
+.pg-pin::after {
+  content: '';
+  position: absolute;
+  inset: -9px;
+}
+
+.pg-pin:not(:disabled):hover,
+.pg-pin:not(:disabled):focus-visible {
+  transform: scale(1.15);
+  z-index: 2;
+}
+
+/* Mapa bloqueado (ver MAPA_INTERACTIVO en index.html): el punto se sigue
+   viendo igual, pero deja de invitar a pulsarlo. */
+.pg-pin:disabled {
+  cursor: default;
+}
+
+.pg-pin.is-selected {
+  z-index: 3;
+  transform: scale(1.16);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.92), 0 6px 18px rgba(13, 26, 18, 0.35);
+}
+
+#country-sidebar .country-info-panel {
+  background: var(--pg-surface-2) !important;
+  border-radius: var(--pg-r-md) !important;
+}
+
+/* -------------------------------------------------------- 10. Catálogo */
+/* La ficha de producto puede ser más alta que la pantalla: se limita y
+   desplaza por dentro para que la cabecera y el cierre sigan a la vista. */
+#productModal .modal-dialog {
+  max-height: calc(100vh - 2rem);
+  margin: 1rem auto;
+}
+
+#productModal .modal-content {
+  max-height: calc(100vh - 2rem);
+  overflow: hidden;
+}
+
+#productModal .modal-body {
+  overflow-y: auto;
+}
+
+/* La cabecera declaraba texto claro, pero la regla de encabezados de folio
+   (tinta) ganaba al `text-white` del marcado: el título salía oscuro sobre el
+   degradado verde. Se fija aquí, y el degradado deja de estar en línea. */
+#productModal .modal-header {
+  background: linear-gradient(135deg, var(--green) 0%, #43a047 100%) !important;
+  border-bottom: 0;
+}
+
+#productModal .modal-header .modal-title,
+#productModal .modal-header h4,
+#productModal .modal-header i {
+  color: #fff !important;
+}
+
+#productModal .modal-header p {
+  color: rgba(255, 255, 255, 0.78) !important;
+}
+
+/* La ficha forzaba 892×280 px sobre un original vertical de 675×1200: lo
+   ampliaba un 32 % y lo recortaba a una banda 3.2:1. Con 16:10 y el encuadre
+   alto se ve la planta, no una franja central.
+   ponytail: el arreglo definitivo es exportar una variante horizontal por
+   producto; mientras no exista, este encuadre es el que menos corta. */
+#productModal .product-hero-image img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: 50% 30%;
+}
+
+.pg-catalog .products-container-outer {
+  margin-top: clamp(0.5rem, 2vh, 1.5rem);
+}
+
+.pg-catalog .products-swiper-wrapper {
+  border-radius: var(--pg-r-lg) !important;
+  box-shadow: var(--pg-shadow-1) !important;
+  border: 1px solid var(--pg-line);
+}
+
+.pg-catalog .product-card {
+  border-radius: var(--pg-r-md) !important;
+  border: 1px solid var(--pg-line);
+  box-shadow: var(--pg-shadow-1) !important;
+}
+
+.pg-catalog .product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--pg-shadow-2) !important;
+}
+
+.pg-catalog .product-image-container {
+  height: clamp(150px, 22vh, 230px) !important;
+}
+
+.pg-catalog .external-nav-btn {
+  background: var(--pg-surface) !important;
+  color: var(--green-deep) !important;
+  border: 1px solid var(--pg-line-strong) !important;
+  box-shadow: var(--pg-shadow-1) !important;
+}
+
+.pg-catalog .external-nav-btn:hover {
+  background: var(--green-deep) !important;
+  border-color: var(--green-deep) !important;
+  color: #fff !important;
+}
+
+/* ----------------------------------------------------------- 11. Reels */
+/* Tira horizontal de clips verticales: la altura manda y el ancho sale del
+   formato 9:16, así la sección nunca desborda la pantalla. */
+.pg-reels__track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  gap: clamp(0.65rem, 1.4vw, 1.1rem);
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pg-reel {
+  position: relative;
+  height: clamp(220px, 44vh, 390px);
+  aspect-ratio: 9 / 16;
+  border-radius: var(--pg-r-lg);
+  overflow: hidden;
+  background: #0b1710;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  padding: 0;
+  display: block;
+  scroll-snap-align: start;
+}
+
+.pg-reel img,
+.pg-reel video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pg-reel video {
+  opacity: 0;
+  transition: opacity var(--pg-base) var(--pg-ease);
+}
+
+.pg-reel.is-playing video {
+  opacity: 1;
+}
+
+.pg-reel.is-playing img,
+.pg-reel.is-playing .pg-reel__play {
+  opacity: 0;
+}
+
+.pg-reel__play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transition: opacity var(--pg-base) var(--pg-ease);
+}
+
+.pg-reel__play span {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: #fff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform var(--pg-base) var(--pg-ease), background-color var(--pg-base) var(--pg-ease);
+}
+
+.pg-reel:hover .pg-reel__play span {
+  transform: scale(1.08);
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.pg-reel__label {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 2.25rem 0.9rem 0.75rem;
+  background: linear-gradient(
+    rgba(9, 22, 13, 0) 0%,
+    rgba(9, 22, 13, 0.55) 38%,
+    rgba(9, 22, 13, 0.9) 72%,
+    rgba(9, 22, 13, 0.96) 100%
+  );
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: left;
+  text-shadow: 0 1px 6px rgba(9, 22, 13, 0.8);
+  pointer-events: none;
+}
+
+/* ---- 11-bis. Reels: fila completa -------------------------------------
+   Los clips son verticales (9:16) y vivían en una tira con scroll de tamaño
+   fijo: ocupaban 930 px de los 1184 disponibles a 1440 y 937 de 1452 a 2560,
+   o sea que quedaban arrinconados a la izquierda con medio ancho vacío.
+   A partir de 768 px pasan a cuatro columnas iguales que llenan el ancho, y
+   el contenedor de la sección (que ya reparte su sobrante) estira la tira,
+   así que el alto disponible es definido: de ahí sale el tope de cada clip.
+   El clip conserva su 9:16 y sólo se recorta —con el `object-fit: cover` que
+   ya llevan dentro— cuando la sección no da para tanto. Por debajo de 768 px
+   se mantiene la tira deslizable, que es lo correcto en un teléfono. */
+@media (min-width: 768px) {
+  #reels .pg-reels__track {
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-flow: row;
+    grid-auto-rows: 1fr;
+    grid-auto-columns: auto;
+    align-items: center;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: visible;
+    padding-bottom: 0;
+    scroll-snap-type: none;
+  }
+
+  #reels .pg-reel {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 9 / 16;
+    max-height: 100%;
+  }
+}
+
+/* ----------------------------------------------------------- 12. Equipo */
+.pg-team {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.75rem, 1.6vw, 1.5rem);
+}
+
+.pg-person {
+  background: var(--pg-surface);
+  border: 1px solid var(--pg-line);
+  border-radius: var(--pg-r-lg);
+  overflow: hidden;
+  transition: box-shadow var(--pg-base) var(--pg-ease), transform var(--pg-base) var(--pg-ease);
+}
+
+.pg-person:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--pg-shadow-2);
+}
+
+.pg-person__media {
+  margin: 0;
+  height: clamp(200px, 32vh, 360px);
+  overflow: hidden;
+}
+
+.pg-person__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms var(--pg-ease);
+}
+
+.pg-person:hover .pg-person__media img {
+  transform: scale(1.04);
+}
+
+.pg-person__body {
+  padding: clamp(0.9rem, 1.6vw, 1.35rem);
+}
+
+.pg-person__name {
+  font-family: var(--f-display);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--pg-ink);
+  margin-bottom: 0.15rem;
+}
+
+.pg-person__role {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pg-ink-3);
+  margin-bottom: 0.85rem;
+}
+
+.pg-person__social {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.pg-person__social a {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--pg-line-strong);
+  border-radius: var(--pg-r-sm);
+  color: var(--pg-ink-2);
+  transition: background-color var(--pg-fast) var(--pg-ease), color var(--pg-fast) var(--pg-ease),
+    border-color var(--pg-fast) var(--pg-ease);
+}
+
+.pg-person__social a:hover {
+  background: var(--green-deep);
+  border-color: var(--green-deep);
+  color: #fff;
+}
+
+/* -------------------------------------------------------------- 13. CTA */
+.pg-cta {
+  position: relative;
+  overflow: hidden;
+  background: var(--green-deep);
+  color: #fff;
+  isolation: isolate;
+}
+
+.pg-cta__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.28;
+}
+
+.pg-cta__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pg-cta__inner {
+  padding-block: clamp(3rem, 9vh, 6rem);
+  text-align: center;
+}
+
+.pg-cta__title {
+  font-size: clamp(1.75rem, 1.2rem + 2.2vw, 3.25rem);
+  color: #fff;
+  margin-bottom: 1rem;
+  max-width: 22ch;
+  margin-inline: auto;
+}
+
+.pg-cta__text {
+  color: rgba(255, 255, 255, 0.78);
+  max-width: 42ch;
+  margin: 0 auto clamp(1.5rem, 4vh, 2.25rem);
+}
+
+.pg-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+/* ----------------------------------------------------------- 14. Footer */
+.footer {
+  background: var(--pg-ink-dark) !important;
+  padding-block: clamp(2.5rem, 7vh, 4rem) !important;
+}
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
+
+.footer__brand {
+  font-family: var(--f-display);
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  color: #fff;
+  margin-bottom: 0.75rem;
+  display: inline-block;
+}
+
+.footer__brand span {
+  color: var(--lime);
+}
+
+.footer__title {
+  font-family: var(--f-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 1.1rem;
+}
+
+.footer__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.footer__list a,
+.footer__contact a {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.9375rem;
+  min-height: 44px;
+  padding-block: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color var(--pg-fast) var(--pg-ease), transform var(--pg-fast) var(--pg-ease);
+}
+
+.footer__list a:hover,
+.footer__contact a:hover {
+  color: #fff;
+  transform: translateX(3px);
+}
+
+.footer__contact p {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.9375rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.55rem;
+  /* el correo no se puede partir: en pantallas de 200 px manda el ancho mínimo
+     de la página y provocaba desplazamiento lateral */
+  overflow-wrap: anywhere;
+}
+
+.footer__contact i {
+  color: var(--lime);
+  width: 16px;
+}
+
+.footer__social {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.footer__social a {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--pg-r-sm);
+  color: #fff;
+  transition: background-color var(--pg-fast) var(--pg-ease), border-color var(--pg-fast) var(--pg-ease);
+}
+
+.footer__social a:hover {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.footer__legal {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: clamp(2rem, 5vh, 3rem);
+  padding-top: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* En móvil los botones flotantes viven en la esquina inferior: se les reserva
+   sitio para que no tapen la última línea del pie. */
+@media (max-width: 991.98px) {
+  .footer__legal {
+    padding-bottom: 5rem;
+  }
+}
+
+.footer__legal a {
+  color: var(--lime);
+}
+
+/* --------------------------------------------------- 15. Aparición */
+.pg-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 800ms var(--pg-ease), transform 800ms var(--pg-ease);
+}
+
+.pg-reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+.pg-reveal[data-delay="1"] { transition-delay: 100ms; }
+.pg-reveal[data-delay="2"] { transition-delay: 200ms; }
+.pg-reveal[data-delay="3"] { transition-delay: 300ms; }
+
+/* -------------------------------------------------- 16. Adaptaciones */
+@media (min-width: 992px) {
+  .pg-about__grid {
+    grid-template-columns: 1.05fr 1fr;
+    gap: clamp(2.5rem, 6vw, 5rem);
+  }
+}
+
+@media (max-width: 991.98px) {
+  .pg-farms {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .pg-team {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 991.98px) {
+  .pg-hero {
+    min-height: calc(100svh - var(--pg-offset));
+  }
+
+  .pg-mosaic {
+    grid-auto-rows: minmax(clamp(140px, 26vw, 200px), 1fr);
+  }
+
+  .pg-tile--a { grid-column: span 12; grid-row: span 1; }
+  .pg-tile--b,
+  .pg-tile--c { grid-column: span 6; }
+  .pg-tile--d,
+  .pg-tile--e { grid-column: span 6; }
+
+  .pg-team {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footer__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .pg-tile__cap {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .pg-hero__inner {
+    padding-block: 1.25rem 2rem;
+  }
+
+  .pg-hero__stats {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+  }
+
+  .pg-hero__lede {
+    margin-bottom: 0.9rem;
+  }
+
+  .pg-hero__actions .pg-btn {
+    flex: 1 1 100%;
+  }
+
+  .pg-hero__lede {
+    font-size: 0.9375rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .pg-metrics {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem 1rem;
+  }
+
+  .pg-farms,
+  .pg-team,
+  .footer__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pg-hero__stat--wide {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-hero__img {
+    animation: none;
+  }
+
+  .pg-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --------------- 17. Portátiles bajos: ritmo compacto ---------------- */
+/* Con 768 px de alto el contenido completo no cabe con el espaciado
+   generoso, así que se aprieta sin cambiar proporciones. */
+@media (min-width: 992px) and (max-height: 860px) {
+  .pg-section {
+    padding-block: clamp(1.25rem, 4vh, 2.5rem);
+  }
+
+  .pg-section__title {
+    font-size: clamp(1.6rem, 3.7vh, 2.4rem);
+    margin-bottom: 0.7rem;
+  }
+
+  .pg-lede {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .pg-section__head {
+    margin-bottom: clamp(0.9rem, 2.2vh, 1.6rem);
+  }
+
+  .pg-eyebrow {
+    margin-bottom: 0.55rem;
+  }
+
+  .pg-hero__title {
+    font-size: clamp(1.9rem, 7.2vh, 4rem);
+  }
+
+  .pg-hero__lede {
+    margin-bottom: 1.1rem;
+  }
+
+  .pg-hero__stats {
+    margin-top: 1.1rem;
+    padding-top: 0.85rem;
+  }
+
+  .pg-checks {
+    margin-top: 1rem;
+    gap: 0.4rem;
+  }
+
+  .pg-checks li {
+    font-size: 0.875rem;
+  }
+
+  .pg-metrics {
+    margin-top: 1.15rem;
+    padding-top: 1rem;
+  }
+
+  .pg-farm__media {
+    aspect-ratio: 2 / 1;
+  }
+
+  .pg-farm__title {
+    font-size: 1rem;
+  }
+
+  .pg-farm__text {
+    font-size: 0.8125rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .pg-reel {
+    height: clamp(190px, 40vh, 300px);
+  }
+
+  .pg-catalog .product-image-container {
+    --alto-foto: clamp(150px, 22vh, 230px);
+  }
+
+  .pg-catalog .product-info {
+    padding: 0.8rem !important;
+  }
+
+  .pg-catalog .product-name {
+    font-size: 1.05rem !important;
+  }
+
+  .pg-catalog .products-swiper {
+    padding: 0.4rem 0 0.6rem 0 !important;
+  }
+
+  .pg-person__media {
+    --alto-retrato: clamp(170px, 28vh, 300px);
+  }
+}
+
+
+/* ==========================================================================
+   Base de maquetación (antes en premium.css, ya consolidado aquí)
+   --------------------------------------------------------------------------
+   Sólo se ha conservado lo que el rediseño sigue usando: encaje de cada
+   sección en la pantalla, cabecera fija, tarjetas del catálogo, mapa, pie y
+   botones flotantes. Se eliminaron 87 reglas que ya no casaban con nada y las
+   presentaciones sustituidas por la capa editorial de arriba.
+   ========================================================================== */
+
+:root {
+  
+  --primary-green: #2e7d32;
+  --primary-green-light: #4caf50;
+  --primary-green-dark: #1b5e20;
+  --accent-green: #66bb6a;
+
+  --pg-green-50: #f1f8f1;
+  --pg-green-100: #e4f1e4;
+  --pg-green-200: #c9e4c9;
+  --pg-green-600: #3d8b40;
+  --pg-green-700: #2e7d32;
+  --pg-green-800: #1f5c23;
+
+  
+  --pg-canvas: #fbfaf7;
+  --pg-surface: #ffffff;
+  --pg-surface-2: #f2f5f0;
+  --pg-surface-3: #e8ede6;
+  --pg-ink: #16211a;
+  --pg-ink-2: #3c4a40;
+  --pg-ink-3: #627166;
+  --pg-ink-4: #93a199;
+  --pg-line: #e2e8df;
+  --pg-ink-dark: #0e1a12;
+
+  
+  --pg-1: 0.25rem;
+  --pg-2: 0.5rem;
+  --pg-3: 0.75rem;
+  --pg-4: 1rem;
+  --pg-5: 1.5rem;
+  --pg-6: 2rem;
+  --pg-7: 3rem;
+  --pg-8: 4rem;
+
+  
+  --pg-r-sm: 10px;
+  --pg-r-md: 14px;
+  --pg-r-lg: 20px;
+  --pg-r-xl: 28px;
+  --pg-r-pill: 999px;
+
+  
+  --pg-shadow-1: 0 1px 2px rgba(14, 26, 18, 0.05), 0 2px 8px rgba(14, 26, 18, 0.04);
+  --pg-shadow-2: 0 4px 12px rgba(14, 26, 18, 0.07), 0 12px 28px rgba(14, 26, 18, 0.06);
+  --pg-shadow-3: 0 18px 45px rgba(14, 26, 18, 0.13);
+
+  
+  --pg-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --pg-fast: 160ms;
+  --pg-base: 240ms;
+  --pg-slow: 380ms;
+
+  
+  /* Alto de la cabecera fija. Lo mide pgHeaderSync() al cargar (index.html)
+     y lo publica en estas dos variables; lo de aquí es el respaldo sin JS.
+     --pg-topbar es la barra verde de contacto, que sólo existe a partir de
+     992px; --pg-nav es la barra de navegación, que es lo único que sigue
+     visible cuando la página ya ha bajado. El alto de sección descuenta sólo
+     --pg-nav, no la cabecera entera: al llegar a una sección la barra
+     superior ya se ha escondido detrás de la de navegación. */
+  --pg-topbar: 44px;
+  --pg-nav: 71px;
+  --pg-offset: calc(var(--pg-topbar) + var(--pg-nav));
+
+  --pg-fit: calc(100vh - var(--pg-nav));
+  --pg-fit: calc(100svh - var(--pg-nav));
+  --pg-section-pad: clamp(1.5rem, 4.5vh, 3rem);
+}
+html {
+  
+  scroll-padding-top: var(--pg-nav);
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  background-color: var(--pg-canvas);
+  color: var(--pg-ink-2);
+  font-family: "Poppins", -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+p {
+  margin-bottom: 1rem;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--pg-ink);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+h1,
+h2,
+.display-3,
+.display-4 {
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-weight: 600;
+}
+h2,
+.display-4 {
+  font-size: clamp(1.7rem, 1.1rem + 1.5vw, 2.5rem);
+  letter-spacing: -0.015em;
+}
+.font-weight-bold,
+b,
+strong {
+  font-weight: 600;
+}
+.text-muted {
+  color: var(--pg-ink-3) !important;
+}
+.text-primary {
+  color: var(--pg-green-700) !important;
+}
+.navbar-container {
+  border-bottom: 1px solid transparent;
+}
+.navbar-container .navbar {
+  min-height: 70px;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  transition: box-shadow var(--pg-base) var(--pg-ease), background-color var(--pg-base) var(--pg-ease);
+}
+.navbar-container.scrolled .navbar,
+.navbar-container.scrolled {
+  background: rgba(255, 255, 255, 0.94) !important;
+  box-shadow: var(--pg-shadow-1) !important;
+  border-bottom-color: var(--pg-line);
+}
+.topbar,
+.container-fluid.fixed-top {
+  background: var(--pg-green-800) !important;
+}
+.navbar-nav .nav-link {
+  color: var(--pg-ink-2);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  padding: 0.5rem 0.75rem !important;
+  position: relative;
+  transition: color var(--pg-fast) var(--pg-ease);
+}
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: var(--pg-green-700) !important;
+}
+.logo-img {
+  height: 52px;
+}
+.btn {
+  border-radius: var(--pg-r-pill);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  padding: 0.75rem 1.5rem;
+  transition: transform var(--pg-fast) var(--pg-ease), box-shadow var(--pg-base) var(--pg-ease),
+    background-color var(--pg-base) var(--pg-ease), color var(--pg-base) var(--pg-ease),
+    border-color var(--pg-base) var(--pg-ease);
+}
+.btn-lg {
+  padding: 0.9rem 1.75rem;
+  font-size: 1rem;
+}
+.btn-primary {
+  background-color: var(--pg-green-700) !important;
+  border-color: var(--pg-green-700) !important;
+  box-shadow: var(--pg-shadow-1);
+}
+#acerca,
+#nuestros-verdes,
+#nuestras-fincas,
+#catalogo,
+#nuestro-equipo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: var(--pg-fit);
+  padding-block: var(--pg-section-pad);
+}
+#acerca h2,
+#nuestros-verdes h2,
+#nuestras-fincas h2,
+#catalogo h2,
+#nuestro-equipo h2,
+#galeria h2,
+#reels h2 {
+  margin-bottom: clamp(0.75rem, 1.8vh, 1.5rem) !important;
+}
+
+/* ---- 19. Galería y reels: contenido elástico --------------------------
+   Estas dos secciones no podían usar sólo `min-height: var(--pg-fit)` porque
+   su contenido tiene alto fijo (retícula de filas y tira de clips) y quedaría
+   pegado arriba con un hueco muerto debajo. Aquí se reparte el sobrante:
+   el contenedor se estira y la retícula / la tira se lo comen. */
+#galeria,
+#reels {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: var(--pg-fit);
+  padding-block: var(--pg-section-pad);
+}
+
+#galeria > .pg-container,
+#reels > .pg-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* la retícula crece y las fotos con ella */
+#galeria .pg-mosaic {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* La tira de reels NO crece: sus columnas se dimensionan por el aspect-ratio
+   del clip (`grid-auto-columns: max-content`), así que una altura en % (o un
+   `1fr`) deja la altura indefinida al medir la columna, la columna colapsa a
+   ~0 y los clips se montan unos encima de otros. Con el alto definido en cada
+   `.pg-reel`, la tira mide lo que mide y el grupo se centra en la sección. */
+.main-content {
+  margin-top: var(--pg-offset);
+  /* La portada se ancla al principio del documento, así que descuenta la
+     cabecera entera y no sólo la barra de navegación. */
+  scroll-margin-top: calc(var(--pg-offset) - var(--pg-nav));
+}
+.hero-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 24, 14, 0.55) 0%,
+    rgba(10, 24, 14, 0.35) 45%,
+    rgba(10, 24, 14, 0.72) 100%
+  );
+}
+#country-sidebar #sidebar-title {
+  font-size: 1.15rem;
+}
+p a:not(.btn):not(.navbar-brand) {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+#nuestros-verdes {
+  background: var(--pg-canvas);
+}
+#country-sidebar .country-info-panel {
+  background: var(--pg-surface-2) !important;
+  border-radius: var(--pg-r-lg) !important;
+  /* Un solo tope para el panel: el mismo que el del mapa. */
+  max-height: var(--mapa-alto);
+  /* Al abrir un país el mapa pasa a 8 columnas y el panel a 4, o sea que el
+     mapa mide el doble de ancho; con su proporción 2028:800 el alto del mapa
+     es panelAncho / 1.2675. Con ese mismo ratio el panel nunca es más alto que
+     el mapa y no queda una banda vacía debajo de él. */
+  aspect-ratio: 1.2675;
+  height: auto;
+}
+#catalogo .products-container-outer {
+  margin: clamp(0.5rem, 2vh, 1.5rem) auto 0;
+}
+.products-swiper-wrapper {
+  border-radius: var(--pg-r-xl) !important;
+  box-shadow: var(--pg-shadow-2) !important;
+}
+.products-swiper {
+  padding: clamp(0.5rem, 2vh, 1.25rem) 0 clamp(0.75rem, 2.5vh, 1.5rem) 0 !important;
+}
+.product-card {
+  border-radius: var(--pg-r-lg) !important;
+  border: 1px solid var(--pg-line);
+  box-shadow: var(--pg-shadow-1) !important;
+  transition: transform var(--pg-base) var(--pg-ease), box-shadow var(--pg-base) var(--pg-ease) !important;
+  
+  flex: 1 1 auto;
+  width: 100% !important;
+  height: 100%;
+}
+/* Mientras la ficha de producto esté desactivada (ver FICHA_PRODUCTO_ACTIVA en
+   index.html) la tarjeta no debe invitar al clic. */
+.product-card.is-static {
+  cursor: default;
+}
+.product-image-container {
+  height: clamp(150px, 22vh, 230px) !important;
+}
+.product-image {
+  transition: transform var(--pg-slow) var(--pg-ease) !important;
+}
+.product-info {
+  padding: clamp(0.9rem, 1.8vh, 1.4rem) !important;
+}
+.product-name {
+  font-size: 1.15rem !important;
+  margin-bottom: 0.25rem !important;
+}
+.product-scientific {
+  margin-bottom: 0.5rem !important;
+  font-size: 0.85rem !important;
+}
+.product-specs {
+  margin-bottom: 0 !important;
+}
+.external-nav-btn {
+  width: 52px !important;
+  height: 52px !important;
+  background: var(--pg-surface) !important;
+  color: var(--pg-green-700) !important;
+  border: 1px solid var(--pg-line) !important;
+  box-shadow: var(--pg-shadow-1) !important;
+  font-size: 16px !important;
+}
+.footer {
+  background: var(--pg-ink-dark) !important;
+  margin-top: 0;
+  padding-block: clamp(2rem, 6vh, 3.5rem) !important;
+}
+.footer p,
+.footer .text-light {
+  color: rgba(255, 255, 255, 0.72) !important;
+  font-size: 0.9375rem;
+}
+.footer h3 {
+  color: #fff;
+  font-size: 0.8125rem;
+  letter-spacing: 0.14em;
+  margin-bottom: var(--pg-4) !important;
+}
+.back-to-top,
+.whatsapp-btn {
+  width: 52px !important;
+  height: 52px !important;
+  /* El padding de .btn-lg (28px por lado) no cabe en los 52px del círculo: con
+     box-sizing border-box el ancho usado sube a 62px y el botón sale ovalado. */
+  padding: 0 !important;
+  border: 0 !important;
+  right: 24px !important;
+  bottom: 24px !important;
+  border-radius: 50% !important;
+  box-shadow: var(--pg-shadow-2) !important;
+}
+.whatsapp-btn {
+  bottom: 88px !important;
+  animation: none;
+}
+.whatsapp-btn i,
+.back-to-top i {
+  font-size: 20px;
+}
+
+/* Volver arriba: utilitario discreto. Tinta en reposo y verde al pasar el ratón,
+   para no competir con el verde de WhatsApp justo encima.
+   Sin `display` aquí a propósito: lo gobierna jQuery (fadeIn/fadeOut de
+   js/main.js) y un `!important` en esta hoja anularía tanto el `display: none`
+   de base como el fade, dejando el botón siempre visible. */
+.back-to-top {
+  background: var(--pg-ink) !important;
+  animation: none !important;
+  text-align: center;
+  /* El glifo de la fuente va 3px alto dentro de su caja, así que el interlineado
+     se sube el doble para bajarlo la mitad: 52 + 2×3. Sin esto el icono queda
+     pegado al borde superior del círculo. */
+  line-height: 58px;
+  transition: background-color var(--pg-fast) var(--pg-ease),
+    transform var(--pg-fast) var(--pg-ease) !important;
+}
+.back-to-top:hover,
+.back-to-top:focus-visible {
+  background: var(--pg-green-700) !important;
+  transform: translateY(-3px);
+}
+.back-to-top i {
+  color: #fff !important;
+  transition: color var(--pg-fast) var(--pg-ease) !important;
+}
+@media (min-width: 992px) and (max-height: 800px) {:root {
+    --pg-section-pad: clamp(1.25rem, 3.5vh, 2.25rem);
+  }}
+@media (max-width: 991.98px) {:root {
+    --pg-topbar: 0px;
+    --pg-nav: 82px;
+  }
+body {
+    font-size: 0.9688rem;
+  }
+.main-content {
+    margin-top: var(--pg-offset);
+  }
+#acerca,
+  #nuestros-verdes,
+  #nuestras-fincas,
+  #catalogo,
+  #nuestro-equipo,
+  #galeria,
+  #reels {
+    padding-block: clamp(2rem, 7vw, 3.5rem);
+  }
+.navbar-container .navbar {
+    background: rgba(255, 255, 255, 0.96);
+  }
+.navbar-collapse {
+    border-radius: var(--pg-r-lg) !important;
+    box-shadow: var(--pg-shadow-2);
+    padding: 0.5rem !important;
+  }
+.navbar-nav .nav-link {
+    padding: 0.75rem 1rem !important;
+    font-size: 1rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+.navbar-toggler {
+    min-width: 44px;
+    min-height: 44px;
+  }
+/* el mapamundi ya es proporcional: sólo se encoge el marcador para que los
+   países vecinos (España, Francia, Alemania) no se monten entre sí */
+.pg-pin {
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+    font-size: 10px;
+  }
+#country-sidebar .country-info-panel {
+    max-height: none;
+    /* apilado debajo del mapa: el alto lo pone el contenido, no la proporción */
+    aspect-ratio: auto;
+    margin-top: 1rem;
+  }
+.product-image-container {
+    height: clamp(180px, 52vw, 260px) !important;
+  }
+.external-nav {
+    display: none !important;
+  }
+.btn {
+    min-height: 44px;
+  }
+.fab,
+  .back-to-top,
+  .whatsapp-btn {
+    right: 16px !important;
+  }}
+@media (prefers-reduced-motion: reduce) {*,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }}
+
+
+/* ==========================================================================
+   17-bis. Foto vertical: producto y equipo
+   --------------------------------------------------------------------------
+   Las fotos de producto son 675x1200 y las del equipo 338x600; casi todas
+   verticales. Con cajas apaisadas (150-230 px de alto) el recorte se comía
+   hasta el 77 % del alto: el producto salía mutilado y a las personas se les
+   cortaba la cabeza. Aquí manda el alto —la caja se dimensiona con el alto
+   disponible y la anchura sale de la proporción—, así que no hay recorte
+   vertical. Cada perfil de pantalla puede ajustar --alto-foto / --alto-retrato.
+   ========================================================================== */
+
+.pg-catalog .product-image-container,
+.product-image-container {
+  --alto-foto: clamp(190px, 42vh, 300px);
+  height: auto !important;
+  aspect-ratio: 9 / 16;
+  width: 100%;
+  max-width: min(100%, calc(var(--alto-foto) * 9 / 16));
+  margin-inline: auto;
+  overflow: hidden;
+}
+
+.pg-catalog .product-image,
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.pg-person__media {
+  --alto-retrato: clamp(200px, 40vh, 380px);
+  height: auto !important;
+  aspect-ratio: 9 / 16;
+  width: 100%;
+  max-width: min(100%, calc(var(--alto-retrato) * 9 / 16));
+  margin-inline: auto;
+}
+
+/* Si por el perfil de pantalla la caja quedase apaisada, el recorte debe
+   comerse el pie y nunca la cabeza. */
+.pg-person__media img {
+  object-position: center top;
+}
+
+/* --------------------------------------------------------------------------
+   Ficha del producto: la foto arriba y los datos debajo, en todos los
+   tamaños. La foto es vertical (675x1200), así que manda el alto: la caja se
+   dimensiona con --alto-foto y la anchura sale de la proporción 9:16. Por eso
+   la tarjeta no se estira a lo ancho —un 9:16 a 318 px de ancho mediría 565 px
+   de alto— y la foto queda centrada sobre la tarjeta.
+   -------------------------------------------------------------------------- */
+@media (min-width: 576px) {
+  .pg-catalog .product-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.625rem;
+  }
+
+  .pg-catalog .product-image-container {
+    --alto-foto: clamp(200px, 44vh, 340px);
+    flex: 0 0 auto;
+    align-self: center;
+    width: 100%;
+    max-width: min(100%, calc(var(--alto-foto) * 9 / 16));
+    margin-inline: auto;
+    border-radius: var(--pg-r-sm);
+  }
+
+  .pg-catalog .product-info {
+    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: clamp(0.8rem, 1.4vw, 1.25rem) !important;
+  }
+}
+
+/* Teléfono: la foto arriba y los datos debajo, centrados en la tarjeta */
+@media (max-width: 575.98px) {
+  .pg-catalog .product-card {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pg-catalog .product-info {
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   18. Perfiles por tamaño de pantalla
+   --------------------------------------------------------------------------
+   Un mismo diseño no sirve igual en un reloj de 197 px de alto que en una TV
+   4K. Aquí se define, por familia de dispositivo, cuánto ocupa cada sección y
+   qué se recorta para que nada desborde ni quede desproporcionado.
+   El orden importa: estas reglas van al final para mandar sobre las bases.
+   ========================================================================== */
+
+/* ---- 18a. Ventanas de poca altura (móvil apaisado, portátil bajo, TV 720) --
+   Con menos de 620 px de alto —que es lo que da un portátil de 1366x768 con la
+   barra del navegador— la portada no puede permitirse las cifras ni la flecha:
+   se queda en antetítulo, titular, bajada y acción principal. */
+@media (max-height: 620px) {
+  .pg-hero__stats,
+  .pg-hero__cue {
+    display: none;
+  }
+
+  .pg-hero__inner {
+    padding-block: 1rem;
+  }
+
+  .pg-hero__title {
+    font-size: clamp(1.5rem, 6.5vh, 2.5rem);
+    margin-bottom: 0.75rem;
+  }
+
+  .pg-hero__actions .pg-btn {
+    padding: 0.7rem 1.25rem;
+    font-size: 0.75rem;
+  }
+
+  /* El relleno de las secciones lo fijan reglas con id (0,1,0,0): hay que
+     repetir el id para poder reducirlo en pantallas bajas. */
+  #acerca,
+  #nuestros-verdes,
+  #nuestras-fincas,
+  #catalogo,
+  #nuestro-equipo {
+    padding-block: 0.9rem;
+  }
+
+  .pg-section__head {
+    margin-bottom: 1rem;
+  }
+
+  .pg-section__title {
+    font-size: clamp(1.35rem, 3.6vh, 2rem);
+    margin-bottom: 0.5rem;
+  }
+
+  .pg-lede {
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+
+  /* Las tarjetas también se aprietan: en 1366x608 la sección de instalaciones
+     se pasaba 19 px de la pantalla por culpa del relleno interior. */
+  .pg-farm__body,
+  .pg-person__body {
+    padding: 0.75rem 1rem;
+  }
+
+  .pg-farm__text,
+  .pg-person__role {
+    font-size: 0.875rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .pg-chips li {
+    font-size: 0.75rem;
+    padding-block: 0.2rem;
+  }
+
+  /* La foto de la tarjeta también cede: en 1280x600 bastaba con recortarla
+     un poco para que la sección entera entrase en la pantalla. */
+  .pg-farm__media {
+    aspect-ratio: 2 / 1;
+  }
+
+  .pg-person__media {
+    --alto-retrato: clamp(150px, 26vh, 260px);
+  }
+
+  .pg-catalog .product-image-container,
+  .product-image-container {
+    --alto-foto: clamp(180px, 30vh, 300px);
+  }
+}
+
+/* Por debajo de 480 px tampoco cabe la bajada */
+@media (max-height: 480px) {
+  .pg-hero__lede {
+    display: none;
+  }
+}
+
+/* ---- 18b. Relojes y pantallas mínimas --------------------------------
+   Pantallas pequeñas en AMBAS dimensiones (reloj): no cabe un diseño de
+   tarjetas. Se pasa a lista compacta, sin imágenes decorativas, y la portada
+   se queda en el titular con una sola acción. Un móvil de 320x568 no entra
+   aquí: es estrecho pero alto, y usa el perfil de móvil. */
+@media (max-width: 340px) and (max-height: 420px), (max-height: 260px) {
+  :root {
+    --pg-topbar: 0px;
+    --pg-nav: 46px;
+    --f-gutter: 0.75rem;
+  }
+
+  /* Base tipográfica: un reloj se lee a 30 cm, así que 16px es el mínimo y no
+     el máximo. Las medidas pequeñas del perfil se suben en consecuencia. */
+  html {
+    font-size: 16px;
+    /* la tira de clips desborda unos píxeles en pantallas de 190 px */
+    overflow-x: hidden;
+  }
+
+  body {
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+
+  /* encabezado mínimo */
+  .navbar-container {
+    top: 0 !important;
+  }
+
+  .navbar-container .navbar {
+    min-height: 46px;
+    padding: 0.25rem 0.5rem !important;
+  }
+
+  .logo-img-mobile {
+    height: 28px !important;
+    max-width: 92px;
+  }
+
+  .navbar-toggler {
+    min-width: 38px;
+    min-height: 38px;
+    padding: 4px 6px !important;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.9375rem;
+    min-height: 38px;
+  }
+
+  .pg-container {
+    padding-inline: 0.75rem;
+  }
+
+  /* portada: sólo titular y acción principal */
+  .pg-hero {
+    min-height: calc(100svh - var(--pg-offset));
+    min-height: calc(100vh - var(--pg-offset));
+    align-items: center;
+  }
+
+  .pg-hero__lede,
+  .pg-hero__stats,
+  .pg-hero__cue,
+  .pg-hero__actions .pg-btn--ghost {
+    display: none;
+  }
+
+  .pg-hero__inner {
+    padding-block: 0.75rem;
+  }
+
+  .pg-eyebrow {
+    display: none;
+  }
+
+  .pg-hero__title {
+    font-size: clamp(1.25rem, 9vw, 1.75rem);
+    line-height: 1.15;
+    margin-bottom: 0.65rem;
+    max-width: none;
+  }
+
+  .pg-hero__actions .pg-btn {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* secciones: al contenido, sin forzar pantalla completa */
+  .pg-section,
+  .pg-about,
+  .pg-catalog {
+    min-height: 0 !important;
+  }
+
+  #acerca,
+  #nuestros-verdes,
+  #nuestras-fincas,
+  #catalogo,
+  #nuestro-equipo {
+    padding-block: 1rem;
+  }
+
+  .pg-section__head {
+    margin-bottom: 0.9rem;
+  }
+
+  .pg-section__title {
+    font-size: clamp(1.125rem, 6vw, 1.5rem);
+    margin-bottom: 0.4rem;
+  }
+
+  .pg-lede {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    max-width: none;
+  }
+
+  /* nada decorativo que ocupe alto */
+  .pg-about__media,
+  .pg-tile__cap,
+  .pg-cta__bg,
+  .pg-hero__scrim,
+  .pg-person__social,
+  .footer__social {
+    display: none;
+  }
+
+  /* en un reloj las fotos no aportan: el contenido va primero */
+  .pg-farm__media,
+  .pg-person__media {
+    display: none;
+  }
+
+  .pg-tile--b,
+  .pg-tile--c,
+  .pg-tile--d,
+  .pg-tile--e,
+  .pg-tile--f {
+    display: none;
+  }
+
+  .pg-checks {
+    display: none;
+  }
+
+  .pg-chips {
+    display: none;
+  }
+
+  .pg-about__media img:first-child {
+    aspect-ratio: 16 / 9;
+    box-shadow: none;
+  }
+
+  .pg-checks {
+    margin-top: 0.75rem;
+    gap: 0.35rem;
+  }
+
+  .pg-checks li {
+    font-size: 0.8125rem;
+  }
+
+  .pg-metrics {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 0.9rem;
+    padding-top: 0.75rem;
+  }
+
+  .pg-metric dt {
+    font-size: 1.375rem;
+  }
+
+  .pg-metric dd {
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* mosaico y rejillas: una columna, filas cortas */
+  .pg-mosaic {
+    grid-auto-rows: minmax(96px, 1fr);
+    gap: 0.4rem;
+  }
+
+  .pg-tile--a,
+  .pg-tile--b,
+  .pg-tile--c,
+  .pg-tile--d,
+  .pg-tile--e,
+  .pg-tile--f {
+    grid-column: span 12;
+    grid-row: span 1;
+  }
+
+  .pg-farms,
+  .pg-team,
+  .footer__grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  /* tarjetas en horizontal: la foto deja de ocupar media pantalla */
+  .pg-farm,
+  .pg-person {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .pg-farm__media {
+    flex: 0 0 38%;
+    aspect-ratio: auto;
+  }
+
+  .pg-person__media {
+    flex: 0 0 38%;
+    height: auto;
+  }
+
+  .pg-farm__body,
+  .pg-person__body {
+    padding: 0.6rem 0.7rem;
+  }
+
+  .pg-farm__title,
+  .pg-person__name {
+    font-size: 0.9375rem;
+  }
+
+  .pg-farm__text,
+  .pg-person__role {
+    font-size: 0.75rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .pg-chips {
+    display: none;
+  }
+
+  .pg-person__social {
+    gap: 0.3rem;
+  }
+
+  .pg-person__social a {
+    width: 34px;
+    height: 34px;
+  }
+
+  /* mapa y carrusel, al mínimo útil */
+  .pg-pin {
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border-width: 1px;
+    font-size: 9px;
+  }
+
+  .pg-pin::after {
+    inset: -6px;
+  }
+
+  /* En un reloj la foto vertical se queda en un sello: manda el texto */
+  .pg-catalog .product-image-container,
+  .product-image-container {
+    --alto-foto: 120px;
+  }
+
+  .pg-catalog .external-nav {
+    display: none;
+  }
+
+  /* clips en una fila que se desplaza */
+  .pg-reel {
+    height: 190px;
+  }
+
+  .pg-reel__label {
+    font-size: 0.8125rem;
+    padding: 1.25rem 0.6rem 0.5rem;
+  }
+
+  .pg-cta__inner {
+    padding-block: 1.5rem;
+  }
+
+  .pg-cta__title {
+    font-size: 1.25rem;
+  }
+
+  .pg-footer,
+  .footer {
+    padding-block: 1.5rem !important;
+  }
+
+  /* pie de página: en un reloj sólo la marca, la navegación y el contacto */
+  .footer__grid > div:first-child > p,
+  .footer__legal span + span {
+    display: none;
+  }
+
+  .footer__list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.15rem 0.5rem;
+  }
+
+  .footer__list li + li {
+    margin-top: 0;
+  }
+
+  .footer__title {
+    font-size: 0.875rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .footer__list a,
+  .footer__contact p {
+    font-size: 0.8125rem;
+  }
+
+  .footer__legal {
+    padding-bottom: 3.5rem;
+    font-size: 0.8125rem;
+  }
+
+  .back-to-top,
+  .whatsapp-btn {
+    /* 44px, no 40: el `.btn { min-height: 44px }` de móvil recortaría el alto
+       y volvería a dejar el círculo ovalado. Además es el mínimo táctil. */
+    width: 44px !important;
+    height: 44px !important;
+    right: 10px !important;
+  }
+
+  .back-to-top {
+    line-height: 46px;
+  }
+
+  .back-to-top {
+    bottom: 10px !important;
+  }
+
+  .whatsapp-btn {
+    bottom: 58px !important;
+  }
+
+  .whatsapp-btn i,
+  .back-to-top i {
+    font-size: 15px;
+  }
+}
+
+/* ---- 18c. Pantallas estrechas (hasta 991 px de ancho) ----------------
+   La pantalla no da para tarjetas apiladas: las tarjetas pasan a formato
+   horizontal (foto a la izquierda, texto a la derecha) y el texto se aprieta.
+   Así cada sección se acerca a una pantalla en lugar de triplicarla. Aplica
+   también en apaisado: una ventana de 900x500 px no admite tarjetas grandes. */
+@media (max-width: 991.98px) {
+  .pg-about__media img:first-child {
+    aspect-ratio: 16 / 10;
+  }
+
+  .pg-farm,
+  .pg-person {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .pg-farm__media {
+    flex: 0 0 40%;
+    aspect-ratio: auto;
+    min-height: 130px;
+  }
+
+  .pg-person__media {
+    flex: 0 0 36%;
+    height: auto;
+    --alto-retrato: clamp(160px, 30vh, 240px);
+  }
+
+  .pg-farm__body,
+  .pg-person__body {
+    padding: 0.85rem 0.95rem;
+  }
+
+  .pg-farm__text,
+  .pg-person__role {
+    margin-bottom: 0.5rem;
+  }
+
+  .pg-mosaic {
+    grid-auto-rows: minmax(clamp(110px, 22vw, 170px), 1fr);
+  }
+
+  .pg-reel {
+    height: clamp(200px, 38vh, 300px);
+  }
+}
+
+/* Tablet y ventanas medianas: por encima de 768 px de ancho la sección ya
+   admite la composición en dos columnas —foto y texto a la par— y así entra
+   en una pantalla en lugar de desbordarla en una sola columna apilada. */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .pg-about__grid {
+    grid-template-columns: 1.05fr 1fr;
+    gap: 1.75rem;
+  }
+
+  .pg-about__media img:first-child {
+    aspect-ratio: 4 / 3;
+  }
+
+  .pg-checks {
+    gap: 0.5rem;
+  }
+}
+
+/* ---- 18c-bis. Móviles cortos (≤620 px de alto) ----------------------
+   Con la pantalla baja la portada no admite bajada: se queda en antetítulo,
+   titular, acción y cifras, que es lo que identifica al negocio. */
+@media (max-width: 575.98px) and (max-height: 620px) {
+  .pg-hero__lede {
+    display: none;
+  }
+
+  .pg-hero__title {
+    font-size: clamp(1.5rem, 7vw, 2rem);
+    margin-bottom: 0.75rem;
+  }
+
+  .pg-hero__stats {
+    margin-top: 0.9rem;
+    padding-top: 0.7rem;
+  }
+
+  .pg-hero__stat dt {
+    font-size: 1.25rem;
+  }
+
+  .pg-hero__inner {
+    padding-block: 1rem 1.5rem;
+  }
+
+  #acerca,
+    #nuestros-verdes,
+    #nuestras-fincas,
+    #catalogo,
+    #nuestro-equipo {
+    padding-block: 1.25rem;
+  }
+
+  .pg-section__head {
+    margin-bottom: 1.1rem;
+  }
+}
+
+/* ---- 18d. Pantallas grandes y TV -----------------------------------
+   A partir de 1920 px el contenido se quedaba como una isla: se ensancha el
+   contenedor y se sube el tamaño base, que es lo que hace legible la página
+   a distancia de sofá. Todo lo que va en rem escala con él. */
+@media (min-width: 1920px) {
+  :root {
+    --f-max: 1440px;
+  }
+
+  html {
+    font-size: 17px;
+  }
+}
+
+@media (min-width: 2400px) {
+  :root {
+    --f-max: 1560px;
+  }
+
+  html {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 3000px) {
+  :root {
+    --f-max: 1720px;
+  }
+
+  html {
+    font-size: 20px;
+  }
+
+  .pg-section {
+    padding-block: clamp(3.5rem, 7vh, 8rem);
+  }
+
+  /* TV 4K: la foto vertical crece con la pantalla */
+  .pg-catalog .product-image-container,
+  .product-image-container {
+    --alto-foto: 820px;
+  }
+
+  .pg-person__media {
+    --alto-retrato: 520px;
+  }
+}
+
+/* TV con mando: objetivos grandes y foco muy visible */
+@media (min-width: 1920px) and (min-height: 900px) {
+  .pg-btn {
+    padding: 1.1rem 2.1rem;
+    font-size: 0.9375rem;
+  }
+
+  .pg-person__social a,
+  .footer__social a {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+/* El anillo de foco vale para todos los tamaños, no sólo para pantallas
+   grandes: con teclado hay que ver dónde se está. Doble tono (verde oscuro
+   + halo claro) para que se vea igual sobre el lienzo claro y sobre la
+   fotografía del hero o el pie.
+   El `!important` es obligatorio: la capa base trae un `outline:0 !important`
+   de Bootstrap que, al ser de sólo lectura, dejaba este anillo invisible. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.swiper-slide:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--green-mid) !important;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(250, 248, 242, 0.75);
+}
+
+/* ---- 18e. Relojes: portada medida en función del alto -----------------
+   Debe ir al final: con 162x197 px el titular queda en siete líneas y empuja
+   la acción fuera de la pantalla, así que la portada se escala con el alto
+   real del reloj —lo único que cambia de un modelo a otro—. Esta regla tiene
+   que ser la última para ganar a los perfiles de móvil corto, que también
+   encajan en un reloj por anchura y altura. */
+@media (max-height: 260px) {
+  .pg-hero__title {
+    font-size: clamp(0.875rem, 7.6vh, 1.375rem);
+    line-height: 1.12;
+    margin-bottom: 0.5rem;
+  }
+
+  .pg-hero__inner {
+    padding-block: 0.5rem 0.75rem;
+  }
+
+  .pg-hero__actions .pg-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    min-height: 40px;
+  }
+}
